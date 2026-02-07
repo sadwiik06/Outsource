@@ -13,9 +13,9 @@ export const ClientDashboard = () => {
 
   useEffect(() => {
     if (user?.id) {
-          fetchData();
+      fetchData();
     }
-  }, [user]);
+  }, [user?.id]);
 
   const fetchData = () => {
     clientTaskService.getTasksByClientId(user.id).then(response => {
