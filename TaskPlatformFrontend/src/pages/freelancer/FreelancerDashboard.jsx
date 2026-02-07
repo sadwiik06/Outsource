@@ -14,7 +14,7 @@ export const FreelancerDashboard = () => {
     if (user?.id) {
       fetchStatsTasksAndMilestones();
     }
-  }, [user]);
+  }, [user?.id]);
 
   const fetchStatsTasksAndMilestones = async () => {
     try {
