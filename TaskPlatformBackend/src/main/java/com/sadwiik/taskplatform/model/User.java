@@ -26,4 +26,7 @@ public class User {
 
     @Column(nullable = false)
     private Double balance = 0.0;
+
+    @Column(nullable = false)
+    private String status = "ACTIVE";
 }

@@ -6,7 +6,7 @@ import { Layout } from './components/Layout';
 import './App.css';
 
 // Pages
-import { HomePage } from './pages/HomePage';
+import HomePage from './pages/HomePage';
 
 // Auth Pages
 import { LoginPage } from './pages/auth/LoginPage';

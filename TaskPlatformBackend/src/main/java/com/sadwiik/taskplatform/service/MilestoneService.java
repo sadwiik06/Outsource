@@ -138,4 +138,22 @@ public class MilestoneService {
         milestone.setRejectionReason(reason);
         milestoneRepository.save(milestone);
     }
+
+    public void createownmilestone(Milestone details){
+        milestoneRepository.save(details);
+    }
+    public void updateownmilestone(Long milestoneId , Milestone details){
+        milestoneRepository.findById(milestoneId)
+        .map(existingMilestone -> {
+        existingMilestone.setFreelancerId(details.getFreelancerId());
+        existingMilestone.setTitle(details.getTitle());
+        existingMilestone.setDescription(details.getDescription());
+        existingMilestone.setAmount(details.getAmount());
+        return milestoneRepository.save(existingMilestone);
+        })
+        .orElseThrow(() -> new RuntimeException("Milestone not found with id " + milestoneId));
+    }
+    public void deleteownmilestone(Long milestoneId){
+        milestoneRepository.deleteById(milestoneId);
+    }
 }

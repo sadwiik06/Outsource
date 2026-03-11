@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
+import { Link } from 'react-router-dom';
 import api from '../../config/api';
+import '../Dashboard.css';
+import './Freelancer.css';
 
 export const FreelancerDashboard = () => {
   const { user, refreshUser } = useContext(AuthContext);
@@ -37,107 +40,130 @@ export const FreelancerDashboard = () => {
     setLoading(false);
   };
 
-  const handleUrlChange = (id, url) => {
-    setSubmissionUrls(prev => ({ ...prev, [id]: url }));
-  };
-
-  const handleSubmit = async (milestoneId) => {
-    const url = submissionUrls[milestoneId];
-    if (!url) {
-      alert('Please enter a submission URL');
-      return;
-    }
-    try {
-      await api.post(`/freelancer/submit-milestone/${milestoneId}`, { submissionUrl: url }, {
-        headers: { 'X-User-Id': user.id },
-      });
-      alert('Milestone submitted successfully!');
-      fetchStatsTasksAndMilestones();
-    } catch (err) {
-      alert('Failed to submit milestone');
-    }
-  };
-
   const actionableMilestones = milestones.filter(m => ['SUGGESTED', 'FUNDED', 'REJECTED', 'CREATED'].includes(m.status));
 
+  const getStatusClass = (status) => {
+    switch (status) {
+      case 'PAID': return 'status-paid';
+      case 'FUNDED': return 'status-funded';
+      case 'REJECTED': return 'status-rejected';
+      case 'SUBMITTED': return 'status-submitted';
+      default: return 'status-default';
+    }
+  };
+
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Freelancer Dashboard</h2>
-      <div style={{ backgroundColor: '#f5f5f5', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
-        <h3>Welcome, {user?.email}</h3>
-        <p><strong>Freelancer ID:</strong> {user?.id}</p>
-      </div>
+    <div className="dashboard-wrapper">
+      <div className="dashboard-container">
 
-      <nav style={{ marginBottom: '20px' }}>
-        <a href="/freelancer/profile" style={{ marginRight: '10px' }}>Profile</a>
-        <a href="/freelancer/tasks" style={{ marginRight: '10px' }}>All Tasks</a>
-        <a href="/freelancer/milestones" style={{ marginRight: '10px', padding: '10px 20px', backgroundColor: '#2196F3', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
-          Go to My Milestones & Submissions
-        </a>
-      </nav>
-
-      <section style={{ marginBottom: '30px' }}>
-        <h3 style={{ color: '#d32f2f' }}>⚠️ Milestones Needing Your Action</h3>
-        {actionableMilestones.length === 0 ? (
-          <p>You have no pending milestones to submit.</p>
-        ) : (
-          actionableMilestones.map(m => (
-            <div key={m.id} style={{ border: '2px solid #ffcdd2', padding: '15px', borderRadius: '8px', marginBottom: '10px', backgroundColor: '#fff9f9' }}>
-              <h4>{m.taskTitle} - {m.title}</h4>
-              <p><strong>Status:</strong> <span style={{ color: m.status === 'REJECTED' ? '#d32f2f' : '#2196F3' }}>{m.status}</span></p>
-              {m.rejectionReason && (
-                <div style={{
-                  backgroundColor: '#ffebee',
-                  padding: '15px',
-                  borderRadius: '8px',
-                  borderLeft: '4px solid #f44336',
-                  marginTop: '10px',
-                  marginBottom: '15px'
-                }}>
-                  <h4 style={{ margin: '0 0 5px 0', color: '#d32f2f', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    <span>🚩</span> Fix Required:
-                  </h4>
-                  <p style={{ margin: 0, color: '#333' }}>{m.rejectionReason}</p>
-                </div>
-              )}
-              <a
-                href={`/freelancer/submit/${m.id}`}
-                style={{
-                  display: 'block',
-                  width: '100%',
-                  padding: '12px',
-                  backgroundColor: '#4CAF50',
-                  color: 'white',
-                  textAlign: 'center',
-                  textDecoration: 'none',
-                  borderRadius: '8px',
-                  fontWeight: 'bold',
-                  fontSize: '1.1rem',
-                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                }}
-              >
-                {m.status === 'REJECTED' ? 'RE-SUBMIT WORK NOW →' : 'SUBMIT WORK NOW →'}
-              </a>
-            </div>
-          ))
-        )}
-      </section>
-
-      <section>
-        <h3>Ongoing Tasks</h3>
-        {tasks.length === 0 ? <p>No tasks assigned yet.</p> : tasks.map(task => (
-          <div key={task.id} style={{ border: '1px solid #ddd', padding: '10px', margin: '10px 0', borderRadius: '4px' }}>
-            <h4>{task.title}</h4>
-            <p><strong>Status:</strong> {task.status}</p>
-            <a
-              href="/freelancer/milestones"
-              style={{ display: 'inline-block', marginTop: '10px', color: '#2196F3', fontWeight: 'bold' }}
-            >
-              Full Milestone View →
-            </a>
+        {/* Header Area */}
+        <div className="dashboard-header">
+          <div className="dashboard-header-title">
+            <h2>Freelancer Dashboard</h2>
+            <p className="dashboard-header-text">Welcome back, {user?.email}</p>
           </div>
-        ))}
-      </section>
+          <div className="dashboard-header-actions">
+            <Link to="/freelancer/profile" className="btn-premium !bg-gradient-to-r !from-neutral-700 !to-neutral-900 !shadow-neutral-500/30">Profile</Link>
+            <Link to="/freelancer/tasks" className="btn-premium !bg-gradient-to-r !from-neutral-700 !to-neutral-900 !shadow-neutral-500/30">All Tasks</Link>
+            <Link to="/freelancer/milestones" className="btn-premium">Manage Milestones</Link>
+          </div>
+        </div>
+
+        {loading ? (
+          <div className="py-12 text-center text-neutral-500">Loading dashboard data...</div>
+        ) : (
+          <div className="dashboard-grid dashboard-grid-sidebar">
+
+            {/* Main Content Area */}
+            <div className="dashboard-main-content dashboard-section">
+
+              <section>
+                <div className="alert-header">
+                  <span className="alert-icon">⚡</span>
+                  <h3 className="alert-title">Action Required</h3>
+                </div>
+
+                {actionableMilestones.length === 0 ? (
+                  <div className="card empty-state">
+                    <p>You have no pending milestones to submit.</p>
+                  </div>
+                ) : (
+                  <div className="dashboard-list flex flex-col gap-4">
+                    {actionableMilestones.map(m => (
+                      <div key={m.id} className="card p-6 !border-red-200 !bg-red-50/40 transform transition hover:-translate-y-1">
+                        <div className="flex justify-between items-start mb-4">
+                          <div>
+                            <h4 className="list-item-title text-xl text-red-900">{m.taskTitle}</h4>
+                            <span className="text-neutral-600 font-medium text-sm">{m.title}</span>
+                          </div>
+                          <span className={`freelancer-status-badge ${getStatusClass(m.status)}`}>
+                            {m.status}
+                          </span>
+                        </div>
+
+                        {m.rejectionReason && (
+                          <div className="freelancer-feedback-alert mt-4 shadow-sm">
+                            <h4 className="flex items-center gap-2">
+                              <span>🚩</span> Fix Required:
+                            </h4>
+                            <p>{m.rejectionReason}</p>
+                          </div>
+                        )}
+
+                        <div className="mt-6">
+                          <Link
+                            to={`/freelancer/submit/${m.id}`}
+                            className={`btn-premium w-full !block text-center shadow-lg ${m.status === 'REJECTED'
+                                ? '!bg-gradient-to-r !from-red-600 !to-red-700 !shadow-red-500/40'
+                                : '!bg-gradient-to-r !from-emerald-600 !to-emerald-700 !shadow-emerald-500/40'
+                              }`}
+                          >
+                            {m.status === 'REJECTED' ? 'Review & Re-submit Work' : 'Submit Work Now'}
+                          </Link>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
+
+            </div>
+
+            {/* Sidebar */}
+            <div className="dashboard-section">
+              <section>
+                <div className="alert-header mb-4">
+                  <span className="alert-icon opacity-80 filter-none">📋</span>
+                  <h3 className="text-xl font-bold text-neutral-800">Ongoing Tasks</h3>
+                </div>
+                {tasks.length === 0 ? (
+                  <div className="card empty-state">No tasks assigned yet.</div>
+                ) : (
+                  <div className="dashboard-list">
+                    {tasks.map(task => (
+                      <div key={task.id} className="card list-item-card flex flex-col">
+                        <h4 className="list-item-title mb-3">{task.title}</h4>
+                        <div className="list-item-footer mt-auto pt-2 border-t border-neutral-100">
+                          <span className="freelancer-status-badge status-default">
+                            {task.status}
+                          </span>
+                          <Link
+                            to="/freelancer/milestones"
+                            className="list-item-link !text-sm"
+                          >
+                            View Details →
+                          </Link>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
+            </div>
+
+          </div>
+        )}
+      </div>
     </div>
   );
 };
