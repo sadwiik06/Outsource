@@ -1,224 +1,177 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import api from '../../config/api';
+import '../Dashboard.css';
 import './Freelancer.css';
 
 export const FreelancerMilestonesPage = () => {
-  const [milestones, setMilestones] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [selectedMilestone, setSelectedMilestone] = useState(null);
-  const [submissionUrls, setSubmissionUrls] = useState({});
-  const { user } = useContext(AuthContext);
+  const { milestoneId } = useParams();
+  const { user }        = useContext(AuthContext);
+  const navigate        = useNavigate();
+
+  const [milestone, setMilestone]         = useState(null);
+  const [submissionUrl, setSubmissionUrl] = useState('');
+  const [loading, setLoading]             = useState(true);
+  const [submitting, setSubmitting]       = useState(false);
+  const [error, setError]                 = useState('');
 
   useEffect(() => {
-    if (user?.id) {
-      fetchMilestones();
-    }
-  }, [user]);
+    if (user?.id && milestoneId) fetchMilestone();
+  }, [user, milestoneId]);
 
-  const fetchMilestones = async () => {
+  const fetchMilestone = async () => {
     try {
-      const response = await api.get(`/freelancer/milestones/${user.id}`);
-      setMilestones(response.data);
-      // Initialize submission URLs from current data if needed
-      const urls = {};
-      response.data.forEach(m => {
-        urls[m.id] = m.submissionUrl || '';
-      });
-      setSubmissionUrls(urls);
-    } catch (err) {
-      setError('Failed to fetch milestones');
+      const res = await api.get(`/freelancer/milestones/${user.id}`);
+      const m   = res.data.find(item => item.id.toString() === milestoneId);
+      if (m) { setMilestone(m); setSubmissionUrl(m.submissionUrl || ''); }
+      else setError('Milestone not found or not assigned to you.');
+    } catch {
+      setError('Failed to fetch milestone details.');
     }
     setLoading(false);
   };
 
-  const handleUrlChange = (id, url) => {
-    setSubmissionUrls(prev => ({ ...prev, [id]: url }));
-  };
-
-  const handleSubmit = async (milestoneId) => {
-    const url = submissionUrls[milestoneId];
-    if (!url) {
-      alert('Please enter a submission URL');
-      return;
-    }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!submissionUrl) { alert('Please enter a submission URL'); return; }
+    setSubmitting(true);
     try {
-      await api.post(`/freelancer/submit-milestone/${milestoneId}`, { submissionUrl: url }, {
+      await api.post(`/freelancer/submit-milestone/${milestoneId}`, { submissionUrl }, {
         headers: { 'X-User-Id': user.id },
       });
-      alert('Milestone submitted successfully!');
-      setSelectedMilestone(null);
-      fetchMilestones();
-    } catch (err) {
-      setError('Failed to submit milestone');
+      navigate('/freelancer/dashboard');
+    } catch {
+      alert('Submission failed. Make sure this milestone is in a valid state (Suggested, Funded, or Rejected).');
     }
+    setSubmitting(false);
   };
 
-  if (loading) return <div className="freelancer-container"><div className="freelancer-empty-state">Loading milestones...</div></div>;
-  if (error) return <div className="freelancer-container"><div className="freelancer-empty-state text-red-600">{error}</div></div>;
+  const getStatusClass = (status) => ({
+    PAID: 'status-paid', FUNDED: 'status-funded',
+    REJECTED: 'status-rejected', SUBMITTED: 'status-submitted',
+  })[status] || 'status-default';
 
-  const getStatusClass = (status) => {
-    switch (status) {
-      case 'PAID': return 'status-paid';
-      case 'FUNDED': return 'status-funded';
-      case 'REJECTED': return 'status-rejected';
-      case 'SUBMITTED': return 'status-submitted';
-      default: return 'status-default';
-    }
-  };
+  if (loading) return (
+    <div className="dashboard-wrapper">
+      <div className="dashboard-container"><div className="dash-loading">Loading milestone...</div></div>
+    </div>
+  );
 
-  const openModal = (milestone) => setSelectedMilestone(milestone);
-  const closeModal = () => setSelectedMilestone(null);
+  if (error || !milestone) return (
+    <div className="dashboard-wrapper">
+      <div className="dashboard-container">
+        <div className="freelancer-empty-state" style={{ color: 'var(--red)' }}>
+          {error || 'No milestone found.'}
+        </div>
+      </div>
+    </div>
+  );
 
-  // Close modal on overlay click
-  const handleOverlayClick = (e) => {
-    if (e.target.className.includes('freelancer-modal-overlay')) {
-      closeModal();
-    }
-  };
+  const isRejected = milestone.status === 'REJECTED';
 
   return (
-    <div className="freelancer-container">
-      <div className="freelancer-header">
-        <h2>My Milestones</h2>
-        <p>Track your progress, submit work, and get paid.</p>
-      </div>
+    <div className="dashboard-wrapper">
+      <div className="dashboard-container" style={{ maxWidth: '720px' }}>
 
-      {milestones.length === 0 ? (
-        <div className="freelancer-empty-state">No milestones assigned.</div>
-      ) : (
-        <div className="freelancer-table-container">
-          <table className="freelancer-table">
-            <thead>
-              <tr>
-                <th>Task</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Actions / Submission</th>
-              </tr>
-            </thead>
-            <tbody>
-              {milestones.map(milestone => (
-                <tr key={milestone.id}>
-                  <td className="font-medium">{milestone.taskTitle}</td>
-                  <td className="font-bold text-neutral-900">${milestone.amount}</td>
-                  <td>
-                    <span className={`freelancer-status-badge ${getStatusClass(milestone.status)}`}>
-                      {milestone.status}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="flex items-center gap-4">
-                      {milestone.status === 'SUBMITTED' && (
-                        <span className="text-neutral-500 text-sm whitespace-nowrap border border-neutral-200 bg-neutral-50 px-3 py-1 rounded-full font-medium">Awaiting review...</span>
-                      )}
+        {/* Back */}
+        <button
+          onClick={() => navigate(-1)}
+          className="btn-secondary btn-sm"
+          style={{ width: 'fit-content' }}
+        >
+          ← Back
+        </button>
 
-                      {milestone.status === 'PAID' && (
-                        <span className="text-emerald-700 font-bold whitespace-nowrap bg-emerald-50 px-3 py-1 rounded-full text-sm">✓ Paid in full</span>
-                      )}
-
-                      <button
-                        onClick={() => openModal(milestone)}
-                        className="btn-premium text-xs py-1.5 px-4 whitespace-nowrap shadow-sm"
-                      >
-                        {['SUGGESTED', 'FUNDED', 'REJECTED', 'CREATED'].includes(milestone.status) ? 'Submit / Details' : 'View Details'}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {/* Header */}
+        <div className="dashboard-header">
+          <div className="dashboard-header-title">
+            <h2>Submit Work</h2>
+            <p className="dashboard-header-text">
+              {milestone.taskTitle} — {milestone.title}
+            </p>
+          </div>
+          <span className={`freelancer-status-badge ${getStatusClass(milestone.status)}`}>
+            {milestone.status}
+          </span>
         </div>
-      )}
 
-      {selectedMilestone && (
-        <div className="freelancer-modal-overlay" onClick={handleOverlayClick}>
-          <div className="freelancer-modal-content freelancer-details-card !mt-0 !mb-0">
-            <div className="freelancer-details-header">
-              <div>
-                <h3 className="!text-2xl mb-1">{selectedMilestone.taskTitle}</h3>
-                <span className="text-neutral-500 font-medium">{selectedMilestone.title}</span>
+        {/* Milestone detail card */}
+        <div className="freelancer-details-card">
+
+          {/* Info grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '20px' }}>
+            <div className="freelancer-info-card" style={{ padding: '16px' }}>
+              <div className="freelancer-info-card-label">Task</div>
+              <div style={{
+                fontFamily: 'var(--font-d)', fontWeight: 700, fontSize: '15px',
+                color: 'var(--ink)', marginTop: '4px',
+              }}>
+                {milestone.taskTitle}
               </div>
-              <button
-                className="btn-secondary text-sm !px-3 hover:bg-neutral-100"
-                onClick={closeModal}
-              >
-                ✕ Close
-              </button>
             </div>
-
-            <div className="freelancer-details-content">
-              <p className="text-lg text-neutral-700 mb-4">{selectedMilestone.description}</p>
-
-              <div className="grid grid-cols-2 gap-4 mt-2">
-                <div className="freelancer-info-card !p-4">
-                  <div className="freelancer-info-card-label">Milestone Value</div>
-                  <div className="text-2xl font-bold text-emerald-700">${selectedMilestone.amount}</div>
-                </div>
-                <div className="freelancer-info-card !p-4">
-                  <div className="freelancer-info-card-label">Current Status</div>
-                  <div className={`mt-2 freelancer-status-badge ${getStatusClass(selectedMilestone.status)}`}>
-                    {selectedMilestone.status}
-                  </div>
-                </div>
+            <div className="freelancer-info-card" style={{ padding: '16px' }}>
+              <div className="freelancer-info-card-label">Payout on Approval</div>
+              <div className="freelancer-info-card-value" style={{ color: 'var(--accent-3)', marginTop: '4px' }}>
+                ${milestone.amount}
               </div>
-
-              {selectedMilestone.rejectionReason && (
-                <div className="freelancer-feedback-alert">
-                  <h4>🚩 Rejection Feedback</h4>
-                  <p>{selectedMilestone.rejectionReason}</p>
-                </div>
-              )}
-
-              {selectedMilestone.approvalMessage && (
-                <div className="freelancer-success-alert">
-                  <h4>✨ Client Praise & Approval</h4>
-                  <p>{selectedMilestone.approvalMessage}</p>
-                </div>
-              )}
-
-              {['SUGGESTED', 'FUNDED', 'REJECTED', 'CREATED'].includes(selectedMilestone.status) && (
-                <div className="freelancer-submit-form mt-8">
-                  <h4 className="text-neutral-900 font-bold text-lg mb-4">Submit Your Work</h4>
-                  <div className="freelancer-input-group !flex-col !items-stretch">
-                    <input
-                      type="url"
-                      placeholder="Paste Deliverable URL (GitHub, Figma, Drive, etc.)"
-                      value={submissionUrls[selectedMilestone.id] || ''}
-                      onChange={(e) => handleUrlChange(selectedMilestone.id, e.target.value)}
-                      className="freelancer-input !text-lg !py-3"
-                    />
-                    <button
-                      onClick={() => handleSubmit(selectedMilestone.id)}
-                      className="btn-premium !py-3 !text-lg !w-full mt-2"
-                    >
-                      {selectedMilestone.status === 'REJECTED' ? 'Resubmit Updated Work' : 'Confirm & Submit Work'}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {selectedMilestone.submissionUrl && (
-                <div className="mt-6 pt-6 border-t border-neutral-200">
-                  <p className="text-neutral-700">
-                    <strong className="text-neutral-900">Last Submission:</strong>{' '}
-                    <a
-                      href={selectedMilestone.submissionUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 font-medium hover:underline break-all"
-                    >
-                      {selectedMilestone.submissionUrl}
-                    </a>
-                  </p>
-                </div>
-              )}
             </div>
           </div>
+
+          {/* Rejection feedback */}
+          {milestone.rejectionReason && (
+            <div className="freelancer-feedback-alert" style={{ marginBottom: '20px' }}>
+              <h4>🚩 Feedback to Address</h4>
+              <p>{milestone.rejectionReason}</p>
+            </div>
+          )}
+
+          {/* Divider */}
+          <div style={{ borderTop: '2px dashed var(--border-light)', marginBottom: '20px' }} />
+
+          {/* Submit form */}
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div className="dash-field" style={{ marginBottom: 0 }}>
+              <label className="dash-label">Submission URL</label>
+              <input
+                type="url"
+                placeholder="https://github.com/your-repo or figma.com/…"
+                value={submissionUrl}
+                onChange={(e) => setSubmissionUrl(e.target.value)}
+                className="dash-input"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="btn-primary btn-lg btn-full"
+              style={{
+                background: isRejected ? 'var(--red)' : 'var(--ink)',
+                opacity: submitting ? 0.65 : 1,
+                cursor: submitting ? 'not-allowed' : 'pointer',
+                marginTop: '4px',
+              }}
+            >
+              {submitting
+                ? 'Submitting…'
+                : isRejected
+                  ? '→ Resubmit Updated Work'
+                  : '→ Confirm & Submit Work'}
+            </button>
+
+            <p style={{
+              textAlign: 'center', fontSize: '12px', color: 'var(--ink-4)',
+              fontFamily: 'var(--font-d)', letterSpacing: '0.3px',
+            }}>
+              The client will be notified immediately upon submission.
+            </p>
+          </form>
         </div>
-      )}
+
+      </div>
     </div>
   );
 };
+

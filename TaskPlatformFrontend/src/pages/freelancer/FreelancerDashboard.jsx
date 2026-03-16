@@ -7,76 +7,99 @@ import './Freelancer.css';
 
 export const FreelancerDashboard = () => {
   const { user, refreshUser } = useContext(AuthContext);
-  const [stats, setStats] = useState(null);
-  const [tasks, setTasks] = useState([]);
+  const [stats, setStats]     = useState(null);
+  const [tasks, setTasks]     = useState([]);
   const [milestones, setMilestones] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [submissionUrls, setSubmissionUrls] = useState({});
 
   useEffect(() => {
-    if (user?.id) {
-      fetchStatsTasksAndMilestones();
-    }
+    if (user?.id) fetchAll();
   }, [user?.id]);
 
-  const fetchStatsTasksAndMilestones = async () => {
+  const fetchAll = async () => {
     try {
-      const statsRes = await api.get(`/freelancer/stats/${user.id}`);
+      const [statsRes, tasksRes, milestoneRes] = await Promise.all([
+        api.get(`/freelancer/stats/${user.id}`),
+        api.get(`/freelancer/tasks/${user.id}`),
+        api.get(`/freelancer/milestones/${user.id}`),
+      ]);
       setStats(statsRes.data);
-      const tasksRes = await api.get(`/freelancer/tasks/${user.id}`);
       setTasks(tasksRes.data);
-      const milestoneRes = await api.get(`/freelancer/milestones/${user.id}`);
       setMilestones(milestoneRes.data);
-
-      const urls = {};
-      milestoneRes.data.forEach(m => {
-        urls[m.id] = m.submissionUrl || '';
-      });
-      setSubmissionUrls(urls);
-      refreshUser(); // Sync balance automatically
+      refreshUser();
     } catch (err) {
-      console.error('Failed to fetch data');
+      console.error('Failed to fetch dashboard data');
     }
     setLoading(false);
   };
 
-  const actionableMilestones = milestones.filter(m => ['SUGGESTED', 'FUNDED', 'REJECTED', 'CREATED'].includes(m.status));
+  const actionableMilestones = milestones.filter(m =>
+    ['SUGGESTED', 'FUNDED', 'REJECTED', 'CREATED'].includes(m.status)
+  );
 
   const getStatusClass = (status) => {
-    switch (status) {
-      case 'PAID': return 'status-paid';
-      case 'FUNDED': return 'status-funded';
-      case 'REJECTED': return 'status-rejected';
-      case 'SUBMITTED': return 'status-submitted';
-      default: return 'status-default';
-    }
+    const map = {
+      PAID:      'status-paid',
+      FUNDED:    'status-funded',
+      REJECTED:  'status-rejected',
+      SUBMITTED: 'status-submitted',
+    };
+    return map[status] || 'status-default';
+  };
+
+  const getCardModifier = (status) => {
+    if (status === 'REJECTED')  return 'action-card--rejected';
+    if (status === 'SUGGESTED') return 'action-card--suggested';
+    if (status === 'FUNDED')    return 'action-card--funded';
+    return '';
   };
 
   return (
     <div className="dashboard-wrapper">
       <div className="dashboard-container">
 
-        {/* Header Area */}
+        {/* ── HEADER ── */}
         <div className="dashboard-header">
           <div className="dashboard-header-title">
             <h2>Freelancer Dashboard</h2>
             <p className="dashboard-header-text">Welcome back, {user?.email}</p>
           </div>
           <div className="dashboard-header-actions">
-            <Link to="/freelancer/profile" className="btn-premium !bg-gradient-to-r !from-neutral-700 !to-neutral-900 !shadow-neutral-500/30">Profile</Link>
-            <Link to="/freelancer/tasks" className="btn-premium !bg-gradient-to-r !from-neutral-700 !to-neutral-900 !shadow-neutral-500/30">All Tasks</Link>
-            <Link to="/freelancer/milestones" className="btn-premium">Manage Milestones</Link>
+            <Link to="/freelancer/profile"    className="btn-secondary">Profile</Link>
+            <Link to="/freelancer/tasks"      className="btn-secondary">All Tasks</Link>
+            <Link to="/freelancer/milestones" className="btn-primary">Manage Milestones →</Link>
           </div>
         </div>
 
+        {/* ── STATS ── */}
+        {stats && (
+          <div className="stats-grid">
+            <div className="stat-card">
+              <div className="stat-card-title">Tasks Assigned</div>
+              <div className="stat-card-value">{stats.totalTasksAssigned ?? 0}</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-card-title">Milestones Done</div>
+              <div className="stat-card-value">{stats.completedMilestones ?? 0}</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-card-title">Total Earned</div>
+              <div className="stat-card-value">${stats.totalEarned ?? 0}</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-card-title">Pending Payouts</div>
+              <div className="stat-card-value">{stats.pendingMilestones ?? 0}</div>
+            </div>
+          </div>
+        )}
+
         {loading ? (
-          <div className="py-12 text-center text-neutral-500">Loading dashboard data...</div>
+          <div className="dash-loading">Loading dashboard data...</div>
         ) : (
           <div className="dashboard-grid dashboard-grid-sidebar">
 
-            {/* Main Content Area */}
+            {/* ── MAIN: ACTION REQUIRED ── */}
             <div className="dashboard-main-content dashboard-section">
-
               <section>
                 <div className="alert-header">
                   <span className="alert-icon">⚡</span>
@@ -84,17 +107,20 @@ export const FreelancerDashboard = () => {
                 </div>
 
                 {actionableMilestones.length === 0 ? (
-                  <div className="card empty-state">
-                    <p>You have no pending milestones to submit.</p>
+                  <div className="empty-state">
+                    ✓ No pending milestones — you're all caught up.
                   </div>
                 ) : (
-                  <div className="dashboard-list flex flex-col gap-4">
+                  <div className="dashboard-list">
                     {actionableMilestones.map(m => (
-                      <div key={m.id} className="card p-6 !border-red-200 !bg-red-50/40 transform transition hover:-translate-y-1">
-                        <div className="flex justify-between items-start mb-4">
+                      <div
+                        key={m.id}
+                        className={`action-card ${getCardModifier(m.status)}`}
+                      >
+                        <div className="action-card-head">
                           <div>
-                            <h4 className="list-item-title text-xl text-red-900">{m.taskTitle}</h4>
-                            <span className="text-neutral-600 font-medium text-sm">{m.title}</span>
+                            <div className="action-card-task">{m.taskTitle}</div>
+                            <div className="action-card-milestone">{m.title}</div>
                           </div>
                           <span className={`freelancer-status-badge ${getStatusClass(m.status)}`}>
                             {m.status}
@@ -102,56 +128,46 @@ export const FreelancerDashboard = () => {
                         </div>
 
                         {m.rejectionReason && (
-                          <div className="freelancer-feedback-alert mt-4 shadow-sm">
-                            <h4 className="flex items-center gap-2">
-                              <span>🚩</span> Fix Required:
-                            </h4>
+                          <div className="freelancer-feedback-alert">
+                            <h4>🚩 Fix Required</h4>
                             <p>{m.rejectionReason}</p>
                           </div>
                         )}
 
-                        <div className="mt-6">
-                          <Link
-                            to={`/freelancer/submit/${m.id}`}
-                            className={`btn-premium w-full !block text-center shadow-lg ${m.status === 'REJECTED'
-                                ? '!bg-gradient-to-r !from-red-600 !to-red-700 !shadow-red-500/40'
-                                : '!bg-gradient-to-r !from-emerald-600 !to-emerald-700 !shadow-emerald-500/40'
-                              }`}
-                          >
-                            {m.status === 'REJECTED' ? 'Review & Re-submit Work' : 'Submit Work Now'}
-                          </Link>
-                        </div>
+                        <Link
+                          to={`/freelancer/submit/${m.id}`}
+                          className={`action-card-submit-btn ${m.status === 'REJECTED' ? 'action-card-submit-btn--resubmit' : ''}`}
+                        >
+                          {m.status === 'REJECTED' ? '→ Review & Re-submit Work' : '→ Submit Work Now'}
+                        </Link>
                       </div>
                     ))}
                   </div>
                 )}
               </section>
-
             </div>
 
-            {/* Sidebar */}
+            {/* ── SIDEBAR: ONGOING TASKS ── */}
             <div className="dashboard-section">
               <section>
-                <div className="alert-header mb-4">
-                  <span className="alert-icon opacity-80 filter-none">📋</span>
-                  <h3 className="text-xl font-bold text-neutral-800">Ongoing Tasks</h3>
+                <div className="freelancer-section-header">
+                  <span className="freelancer-section-icon">📋</span>
+                  <h3 className="freelancer-section-title">Ongoing Tasks</h3>
                 </div>
+
                 {tasks.length === 0 ? (
-                  <div className="card empty-state">No tasks assigned yet.</div>
+                  <div className="empty-state">No tasks assigned yet.</div>
                 ) : (
                   <div className="dashboard-list">
                     {tasks.map(task => (
-                      <div key={task.id} className="card list-item-card flex flex-col">
-                        <h4 className="list-item-title mb-3">{task.title}</h4>
-                        <div className="list-item-footer mt-auto pt-2 border-t border-neutral-100">
-                          <span className="freelancer-status-badge status-default">
+                      <div key={task.id} className="task-sidebar-card">
+                        <div className="task-sidebar-name">{task.title}</div>
+                        <div className="list-item-footer">
+                          <span className={`freelancer-status-badge ${getStatusClass(task.status)}`}>
                             {task.status}
                           </span>
-                          <Link
-                            to="/freelancer/milestones"
-                            className="list-item-link !text-sm"
-                          >
-                            View Details →
+                          <Link to="/freelancer/milestones" className="list-item-link">
+                            Details →
                           </Link>
                         </div>
                       </div>
@@ -159,6 +175,14 @@ export const FreelancerDashboard = () => {
                   </div>
                 )}
               </section>
+
+              {/* Balance callout */}
+              {user?.balance !== undefined && (
+                <div className="freelancer-info-card">
+                  <div className="freelancer-info-card-label">Wallet Balance</div>
+                  <div className="freelancer-info-card-value">${user.balance}</div>
+                </div>
+              )}
             </div>
 
           </div>

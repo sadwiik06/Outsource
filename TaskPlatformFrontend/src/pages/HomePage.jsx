@@ -1,309 +1,337 @@
-import './HomePage.css';
+import { useState, useEffect, useRef } from "react";
+import "./HomePage.css";
 
-const TICKER_ITEMS = [
-  'Post Tasks',
-  'Hire Top Freelancers',
-  'Track Milestones',
-  'Secure Payments',
-  'Client Reviews',
-  'Freelancer Profiles',
-  'Admin Oversight',
-  'JWT Security',
-  'Real-time Status',
-  'Post Tasks',
-  'Hire Top Freelancers',
-  'Track Milestones',
-  'Secure Payments',
-  'Client Reviews',
-  'Freelancer Profiles',
-  'Admin Oversight',
-  'JWT Security',
-  'Real-time Status',
+const NAV_LINKS = ["Product", "Features", "Pricing", "About"];
+
+const STATS = [
+  { value: "12K+",  label: "Active Projects" },
+  { value: "98%",   label: "Client Satisfaction" },
+  { value: "$4.2M", label: "Paid to Freelancers" },
+  { value: "340+",  label: "Skills Available" },
+];
+
+const FEATURES = [
+  { icon: "⌘", tag: "01", title: "Smart Task Matching",  desc: "AI-powered system connects your project with the most qualified freelancers instantly." },
+  { icon: "◎", tag: "02", title: "Milestone Payments",   desc: "Break work into stages. Pay only when each milestone is completed and approved." },
+  { icon: "⊞", tag: "03", title: "Real-Time Tracking",   desc: "Monitor every submission, approval, and payment from one unified dashboard." },
+  { icon: "✦", tag: "04", title: "Verified Freelancers", desc: "Every freelancer is reviewed, rated, and skill-tested before joining." },
+  { icon: "⌗", tag: "05", title: "Secure Contracts",     desc: "JWT-secured endpoints and encrypted transactions protect every agreement." },
+  { icon: "⊛", tag: "06", title: "Admin Oversight",      desc: "Full audit logs and analytics give admins total platform visibility." },
 ];
 
 const STEPS = [
-  {
-    icon: '✦',
-    title: 'Post a Task',
-    desc: 'Clients define scope, budget, required skills, deadlines, and difficulty level to attract the right talent.',
-  },
-  {
-    icon: '◉',
-    title: 'Assign Freelancers',
-    desc: 'Browse profiles, review stats, and assign the best-fit freelancers to specific milestones.',
-  },
-  {
-    icon: '▲',
-    title: 'Hit Milestones',
-    desc: 'Freelancers submit work per milestone. Clients review, approve, or request revisions.',
-  },
-  {
-    icon: '◆',
-    title: 'Get Paid',
-    desc: 'Payments are processed automatically upon milestone approval, securely and transparently.',
-  },
+  { num: "01", title: "Post a Task",       desc: "Define scope, budget, required skills, and deadlines in minutes." },
+  { num: "02", title: "Pick a Freelancer", desc: "Browse verified profiles and assign milestones with one click." },
+  { num: "03", title: "Track Progress",    desc: "Approve or reject work per milestone — full oversight, zero guesswork." },
+  { num: "04", title: "Release Payment",   desc: "Funds released automatically upon your milestone approval." },
 ];
 
-const ROLES = [
-  {
-    badge: 'client',
-    icon: '◰',
-    title: 'For Clients',
-    desc: 'Post projects, define milestones, manage deadlines, and pay only for approved work.',
-    features: ['Create & manage tasks', 'Assign freelancers', 'Approve/reject submissions', 'Dashboard & analytics', 'Spending overview'],
-  },
-  {
-    badge: 'freelancer',
-    icon: '◱',
-    title: 'For Freelancers',
-    desc: 'Browse assigned tasks, hit milestones, build your profile, and grow your reputation.',
-    features: ['View assigned tasks', 'Submit milestone work', 'Performance stats', 'Profile management', 'Earnings tracker'],
-  },
-  {
-    badge: 'admin',
-    icon: '◲',
-    title: 'For Admins',
-    desc: 'Oversee the entire platform — users, tasks, payments, analytics, and audit logs.',
-    features: ['System analytics', 'User management', 'Suspend accounts', 'Task oversight', 'Audit logs'],
-  },
+const TESTIMONIALS = [
+  { quote: "TaskPlatform changed how we ship. Every milestone is crystal clear, payments are instant.",        author: "Priya M.",  role: "Product Lead, Fintech Startup", av: "PM" },
+  { quote: "As a freelancer, I finally have clarity on what I'm building and exactly when I get paid.",        author: "Daniel O.", role: "Full-Stack Developer",           av: "DO" },
+  { quote: "The admin panel gives me insight into every corner of the platform. Absolutely unmatched.",        author: "Sara K.",   role: "Platform Administrator",          av: "SK" },
 ];
+
+function useInView(threshold = 0.15) {
+  const ref = useRef(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true); }, { threshold });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+  return [ref, inView];
+}
+
+function AnimatedCounter({ target }) {
+  const [count, setCount] = useState(0);
+  const [ref, inView] = useInView(0.3);
+  const num = parseInt(target.replace(/\D/g, ""));
+  const suffix = target.replace(/[\d]/g, "");
+  useEffect(() => {
+    if (!inView) return;
+    let start = 0;
+    const step = (ts) => {
+      if (!start) start = ts;
+      const p = Math.min((ts - start) / 1600, 1);
+      setCount(Math.floor((1 - Math.pow(1 - p, 3)) * num));
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [inView, num]);
+  return <span ref={ref} className="stat-value">{count.toLocaleString()}{suffix}</span>;
+}
 
 export default function HomePage() {
+  const [scrolled, setScrolled]       = useState(false);
+  const [activeTesti, setActiveTesti] = useState(0);
+  const [heroRef,  heroInView]        = useInView(0.1);
+  const [featRef,  featInView]        = useInView(0.1);
+  const [stepsRef, stepsInView]       = useInView(0.1);
+
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", fn);
+    return () => window.removeEventListener("scroll", fn);
+  }, []);
+
+  useEffect(() => {
+    const t = setInterval(() => setActiveTesti(p => (p + 1) % TESTIMONIALS.length), 4200);
+    return () => clearInterval(t);
+  }, []);
+
   return (
-    <>
-      {/* ── NAV ── */}
-      <nav className="nav">
-        <a href="/" className="nav-logo">
-          TaskPlatform <span>BETA</span>
-        </a>
-        <ul className="nav-links">
-          <li><a href="#how-it-works">How it Works</a></li>
-          <li><a href="#roles">Roles</a></li>
-          <li><a href="#features">Features</a></li>
-        </ul>
-        <div className="nav-cta">
-          <a href="/login" className="btn">Log In</a>
-          <a href="/register" className="btn btn-fill">Get Started</a>
+    <div className="hp-root">
+
+      {/* NAV */}
+      <nav className={`hp-nav ${scrolled ? "hp-nav--stuck" : ""}`}>
+        <div className="hp-nav-inner">
+          <a href="#" className="hp-logo">
+            <span className="hp-logo-mark">⬡</span>
+            TaskPlatform
+          </a>
+          <div className="hp-nav-links">
+            {NAV_LINKS.map(l => <a key={l} href="#" className="hp-nav-link">{l}</a>)}
+          </div>
+          <div className="hp-nav-cta">
+            <a href="/login" className="hp-btn-ghost">Log in</a>
+            <a href="/register" className="hp-btn-solid">Get started →</a>
+          </div>
         </div>
       </nav>
 
-      {/* ── HERO ── */}
-      <section className="hero">
-        <div className="hero-left">
-          <div>
-            <div className="hero-tag">Freelance Platform — v1.0</div>
-            <h1 className="hero-h1">
-              Work gets<br />
-              <em>done</em> here,<br />
-              <span className="outline-text">not promised.</span>
+      {/* HERO */}
+      <section className={`hp-hero ${heroInView ? "is-visible" : ""}`} ref={heroRef}>
+        {/* Background dots */}
+        <div className="hp-hero-dots" />
+
+        <div className="hp-hero-inner">
+          <div className="hp-hero-left">
+            <div className="hp-badge">
+              <span className="hp-pulse" />
+              Public beta · 12,000+ teams
+            </div>
+
+            <h1 className="hp-h1">
+              Work, tracked.<br />
+              <em>Results, delivered.</em>
             </h1>
-            <p className="hero-sub">
-              TaskPlatform connects ambitious clients with skilled freelancers.
-              Post tasks, track milestones, review work, and release payments
-              — all in one place.
+
+            <p className="hp-hero-p">
+              TaskPlatform connects clients and freelancers through milestone-driven
+              contracts, transparent payments, and real-time oversight.
+              No chaos. Just progress.
             </p>
-            <div className="hero-actions">
-              <a href="/register?role=client" className="btn btn-accent">
-                Post a Task ↗
-              </a>
-              <a href="/register?role=freelancer" className="btn">
-                Find Work →
-              </a>
+
+            <div className="hp-hero-btns">
+              <a href="#" className="hp-btn-solid hp-btn-lg">Start for free →</a>
+              <a href="#" className="hp-btn-outline hp-btn-lg">How it works</a>
             </div>
-            <p className="hero-note">No commission until milestone approval. Cancel anytime.</p>
-          </div>
-          <div className="hero-stats">
-            <div className="stat-item">
-              <div className="stat-num">4.2K+</div>
-              <div className="stat-label">Active Tasks</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-num">18K+</div>
-              <div className="stat-label">Freelancers</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-num">$3.1M</div>
-              <div className="stat-label">Paid Out</div>
+
+            <div className="hp-social-proof">
+              <div className="hp-avatars">
+                {["AK","JR","NP","LM","RT"].map(x => <div key={x} className="hp-av">{x}</div>)}
+              </div>
+              <span>Trusted by 3,000+ companies worldwide</span>
             </div>
           </div>
-        </div>
 
-        <div className="hero-right">
-          <div className="hero-card-top">
-            <div className="role-badge client">● Client View</div>
-            <div>
-              <div className="card-heading">Post. Assign.<br />Approve.</div>
-              <p className="card-desc">
-                Define your project in minutes. Break it into milestones,
-                assign freelancers, and only pay when you're satisfied.
-              </p>
-              <a href="/register?role=client" className="card-link">Start as a Client</a>
-            </div>
-          </div>
-          <div className="hero-card-bottom">
-            <div className="role-badge freelancer">● Freelancer View</div>
-            <div>
-              <div className="card-heading">Browse. Build.<br />Get paid.</div>
-              <p className="card-desc">
-                Showcase your skills, hit milestones on time, and
-                build a reputation that earns you better projects.
-              </p>
-              <a href="/register?role=freelancer" className="card-link">Join as a Freelancer</a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── TICKER ── */}
-      <div className="ticker" aria-hidden="true">
-        <div className="ticker-inner">
-          {TICKER_ITEMS.map((item, i) => (
-            <span className="ticker-item" key={i}>{item}</span>
-          ))}
-        </div>
-      </div>
-
-      {/* ── HOW IT WORKS ── */}
-      <section className="section" id="how-it-works">
-        <div className="section-header">
-          <span className="section-num">01 / How It Works</span>
-          <h2 className="section-title">Four steps to <em>shipped.</em></h2>
-        </div>
-        <div className="steps-grid">
-          {STEPS.map((step, i) => (
-            <div className="step" key={i}>
-              <div className="step-number">0{i + 1}</div>
-              <div className="step-icon">{step.icon}</div>
-              <h3>{step.title}</h3>
-              <p>{step.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── ROLES ── */}
-      <section className="roles-section" id="roles">
-        <div className="section-header">
-          <span className="section-num">02 / Roles</span>
-          <h2 className="section-title">Built for <em>everyone</em> on the chain.</h2>
-        </div>
-        <div className="roles-grid">
-          {ROLES.map((role, i) => (
-            <div className="role-card" key={i}>
-              <div className="role-icon">{role.icon}</div>
-              <span className={`role-badge ${role.badge}`}>
-                {role.badge.charAt(0).toUpperCase() + role.badge.slice(1)}
-              </span>
-              <h3 style={{ marginTop: '1.25rem' }}>{role.title}</h3>
-              <p>{role.desc}</p>
-              <ul className="role-features">
-                {role.features.map((f, j) => (
-                  <li key={j}>{f}</li>
+          <div className="hp-hero-right">
+            <div className="hp-dash">
+              <div className="hp-dash-top">
+                <div className="hp-wm-dots"><span/><span/><span/></div>
+                <span className="hp-dash-label">Active Tasks</span>
+                <span className="hp-live-badge">● Live</span>
+              </div>
+              <div className="hp-task-rows">
+                {[
+                  { name: "Mobile App Redesign", pct: 74, clr: "#f97316" },
+                  { name: "API Integration",      pct: 50, clr: "#6366f1" },
+                  { name: "Brand Identity Kit",   pct: 90, clr: "#16a34a" },
+                ].map(t => (
+                  <div className="hp-task-row" key={t.name}>
+                    <div className="hp-task-meta">
+                      <span>{t.name}</span>
+                      <span className="hp-pct">{t.pct}%</span>
+                    </div>
+                    <div className="hp-track">
+                      <div className="hp-fill" style={{ width: `${t.pct}%`, background: t.clr }} />
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </div>
+              <div className="hp-dash-chips">
+                <span className="hp-chip hp-chip-green">✓ 3 milestones approved</span>
+                <span className="hp-chip hp-chip-amber">2 pending review</span>
+              </div>
+            </div>
+
+            <div className="hp-notif hp-notif-a">
+              <div className="hp-notif-ico" style={{ background: "#dcfce7", color: "#16a34a" }}>✓</div>
+              <div>
+                <div className="hp-notif-t">Payment Released</div>
+                <div className="hp-notif-s">$1,200 · Milestone 2</div>
+              </div>
+            </div>
+
+            <div className="hp-notif hp-notif-b">
+              <div className="hp-notif-ico" style={{ background: "#fef9c3", color: "#b45309" }}>!</div>
+              <div>
+                <div className="hp-notif-t">New Submission</div>
+                <div className="hp-notif-s">Awaiting your review</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* STATS */}
+      <section className="hp-stats">
+        <div className="hp-stats-row">
+          {STATS.map(s => (
+            <div className="hp-stat" key={s.label}>
+              <AnimatedCounter target={s.value} />
+              <span className="hp-stat-label">{s.label}</span>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ── FEATURES BENTO ── */}
-      <section className="section" id="features">
-        <div className="section-header">
-          <span className="section-num">03 / Features</span>
-          <h2 className="section-title">Everything <em>wired in.</em></h2>
-        </div>
-        <div className="bento-grid">
-          <div className="bento-cell bento-wide">
-            <div className="bento-tag">🔐 Security</div>
-            <h3>JWT-Secured Everything</h3>
-            <p>
-              Every API request is verified with a signed JSON Web Token.
-              Role-based access ensures clients, freelancers, and admins
-              only see what they're supposed to.
-            </p>
+      {/* FEATURES */}
+      <section className={`hp-features ${featInView ? "is-visible" : ""}`} ref={featRef}>
+        <div className="hp-wrap">
+          <div className="hp-sect-head">
+            <div className="hp-tag">Platform Features</div>
+            <h2 className="hp-h2">Everything a modern<br />workflow demands.</h2>
+            <p className="hp-sect-p">Built for the way teams actually operate — not how we wish they did.</p>
           </div>
-          <div className="bento-cell bento-narrow" style={{ borderRight: 'none' }}>
-            <div className="bento-number bento-accent">3</div>
-            <h3>User Roles</h3>
-            <p>Client, Freelancer, and Admin — each with tailored dashboards and permissions.</p>
-          </div>
-
-          <div className="bento-cell bento-third bento-last-row">
-            <div className="bento-tag">📋 Milestones</div>
-            <h3>Granular Control</h3>
-            <p>Break any project into milestones with individual freelancer assignments and budgets.</p>
-          </div>
-          <div className="bento-cell bento-third bento-last-row">
-            <div className="bento-number bento-blue">∞</div>
-            <h3>Revision Cycles</h3>
-            <p>Approve or reject submissions per milestone. Request revisions until the work is exactly right.</p>
-          </div>
-          <div className="bento-cell bento-third bento-last-row" style={{ borderRight: 'none' }}>
-            <div className="bento-tag">📊 Admin Panel</div>
-            <h3>Full Platform Oversight</h3>
-            <p>Audit logs, user suspension, payment management, and system-wide analytics — all in one panel.</p>
+          <div className="hp-feat-grid">
+            {FEATURES.map((f, i) => (
+              <div className="hp-feat-card" key={f.title} style={{ animationDelay: `${i * 65}ms` }}>
+                <div className="hp-feat-row">
+                  <span className="hp-feat-icon">{f.icon}</span>
+                  <span className="hp-feat-num">{f.tag}</span>
+                </div>
+                <h3 className="hp-feat-h">{f.title}</h3>
+                <p className="hp-feat-p">{f.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className="cta-section">
-        <div className="cta-text">
-          <h2>
-            Stop planning.<br />
-            Start <em>shipping.</em>
+      {/* HOW IT WORKS */}
+      <section className={`hp-steps ${stepsInView ? "is-visible" : ""}`} ref={stepsRef}>
+        <div className="hp-wrap">
+          <div className="hp-tag hp-tag-inv">How It Works</div>
+          <h2 className="hp-h2 hp-h2-inv">Four steps to done.</h2>
+          <div className="hp-steps-grid">
+            {STEPS.map((s, i) => (
+              <div className="hp-step" key={s.num} style={{ animationDelay: `${i * 90}ms` }}>
+                <div className="hp-step-n">{s.num}</div>
+                <h3 className="hp-step-h">{s.title}</h3>
+                <p className="hp-step-p">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ROLES */}
+      <section className="hp-roles">
+        <div className="hp-wrap">
+          <div className="hp-tag">Built for Everyone</div>
+          <h2 className="hp-h2">One platform,<br />three perspectives.</h2>
+          <div className="hp-roles-grid">
+            {[
+              { role: "Client",     clr: "#ea580c", bg: "#fff7ed", brd: "#fed7aa", icon: "◈", pts: ["Post tasks with milestones","Assign and manage freelancers","Approve work & release payments"] },
+              { role: "Freelancer", clr: "#4f46e5", bg: "#eef2ff", brd: "#c7d2fe", icon: "◉", pts: ["Browse assigned tasks","Submit milestone work","Track earnings & performance"] },
+              { role: "Admin",      clr: "#0284c7", bg: "#f0f9ff", brd: "#bae6fd", icon: "⊛", pts: ["System-wide analytics","Manage & suspend users","Full audit log access"] },
+            ].map(r => (
+              <div className="hp-role-card" key={r.role}
+                style={{ "--rc": r.clr, "--rbg": r.bg, "--rbrd": r.brd }}>
+                <div className="hp-role-icon">{r.icon}</div>
+                <div className="hp-role-name">{r.role}</div>
+                <ul className="hp-role-ul">
+                  {r.pts.map(p => <li key={p}><span className="hp-role-bullet">→</span>{p}</li>)}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section className="hp-testi">
+        <div className="hp-wrap">
+          <div className="hp-tag">What People Say</div>
+          <h2 className="hp-h2">Heard from the field.</h2>
+          <div className="hp-testi-stage">
+            {TESTIMONIALS.map((t, i) => (
+              <div key={t.author} className={`hp-tc ${i === activeTesti ? "is-active" : ""}`}>
+                <p className="hp-tc-q">"{t.quote}"</p>
+                <div className="hp-tc-who">
+                  <div className="hp-tc-av">{t.av}</div>
+                  <div>
+                    <div className="hp-tc-name">{t.author}</div>
+                    <div className="hp-tc-role">{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="hp-testi-nav">
+            {TESTIMONIALS.map((_, i) => (
+              <button key={i} className={`hp-tdot ${i === activeTesti ? "is-on" : ""}`}
+                onClick={() => setActiveTesti(i)} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="hp-cta">
+        <div className="hp-cta-box">
+          <div className="hp-cta-stripe" />
+          <h2 className="hp-cta-h">
+            Ready to build<br /><em>without the friction?</em>
           </h2>
-          <p>
-            Join thousands of clients and freelancers who use TaskPlatform
-            to get real work done, milestone by milestone.
-          </p>
-        </div>
-        <div className="cta-actions">
-          <a href="/register?role=client" className="btn btn-accent" style={{ fontSize: '0.85rem', padding: '0.9rem 2rem' }}>
-            Post Your First Task ↗
-          </a>
-          <a href="/register?role=freelancer" className="btn btn-fill" style={{ fontSize: '0.85rem', padding: '0.9rem 2rem' }}>
-            Join as Freelancer →
-          </a>
-          <a href="/admin/login" className="btn" style={{ fontSize: '0.75rem' }}>
-            Admin Access ↗
-          </a>
+          <p className="hp-cta-p">Join thousands of clients and freelancers already shipping on TaskPlatform.</p>
+          <div className="hp-cta-btns">
+            <a href="#" className="hp-btn-solid hp-btn-lg">Create free account →</a>
+            <a href="#" className="hp-btn-outline hp-btn-lg">Talk to sales</a>
+          </div>
         </div>
       </section>
 
-      {/* ── FOOTER ── */}
-      <footer className="footer">
-        <div className="footer-brand">
-          <a href="/" className="nav-logo">
-            TaskPlatform <span>BETA</span>
-          </a>
-          <p className="footer-tagline">
-            Connecting clients and freelancers through structured, milestone-based work.
-          </p>
+      {/* FOOTER */}
+      <footer className="hp-footer">
+        <div className="hp-footer-top">
+          <div className="hp-footer-brand">
+            <a href="#" className="hp-logo">
+              <span className="hp-logo-mark">⬡</span>
+              TaskPlatform
+            </a>
+            <p className="hp-footer-tag">Work, managed without the noise.</p>
+          </div>
+          <div className="hp-footer-cols">
+            {[
+              { h: "Product", ls: ["Features","Pricing","Changelog","Roadmap"] },
+              { h: "Company", ls: ["About","Blog","Careers","Press"] },
+              { h: "Legal",   ls: ["Privacy","Terms","Security","Cookies"] },
+            ].map(c => (
+              <div className="hp-fcol" key={c.h}>
+                <div className="hp-fcol-h">{c.h}</div>
+                {c.ls.map(l => <a key={l} href="#" className="hp-flink">{l}</a>)}
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="footer-col">
-          <h4>Platform</h4>
-          <ul>
-            <li><a href="/register?role=client">Post a Task</a></li>
-            <li><a href="/register?role=freelancer">Find Work</a></li>
-            <li><a href="/how-it-works">How It Works</a></li>
-            <li><a href="/pricing">Pricing</a></li>
-          </ul>
-        </div>
-        <div className="footer-col">
-          <h4>Company</h4>
-          <ul>
-            <li><a href="/about">About</a></li>
-            <li><a href="/privacy">Privacy</a></li>
-            <li><a href="/terms">Terms</a></li>
-            <li><a href="/contact">Contact</a></li>
-          </ul>
-        </div>
-        <div className="footer-bottom">
-          <p>© 2025 TaskPlatform</p>
-          <p style={{ marginTop: '0.4rem' }}>Built with Spring Boot + React</p>
+        <div className="hp-footer-bot">
+          <span>© 2025 TaskPlatform. All rights reserved.</span>
+          <span>Built with precision.</span>
         </div>
       </footer>
-    </>
+    </div>
   );
 }

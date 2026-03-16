@@ -5,29 +5,26 @@ import api from '../../config/api';
 import './Auth.css';
 
 export const LoginPage = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { user, setUser } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const [error, setError]       = useState('');
+  const [loading, setLoading]   = useState(false);
+  const { setUser }             = useContext(AuthContext);
+  const navigate                = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-
     try {
       const response = await api.post('/auth/login', { email, password });
       const { token, user: userData } = response.data;
-
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(userData));
       setUser(userData);
-
       const roleRoute = {
-        ADMIN: '/admin/dashboard',
-        CLIENT: '/client/dashboard',
+        ADMIN:      '/admin/dashboard',
+        CLIENT:     '/client/dashboard',
         FREELANCER: '/freelancer/dashboard',
       };
       navigate(roleRoute[userData.role] || '/');
@@ -38,19 +35,52 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-wrapper">
-        <div className="auth-header">
-          <h2 className="auth-title">Welcome back</h2>
-          <p className="auth-subtitle">
-            Sign in to access your dashboard
-          </p>
+    <div className="auth-root">
+      {/* Left panel — branding */}
+      <div className="auth-panel auth-panel-left">
+        <div className="auth-panel-inner">
+          <a href="/" className="auth-logo">
+            <span className="auth-logo-mark">⬡</span>
+            TaskPlatform
+          </a>
+          <div className="auth-panel-body">
+            <div className="auth-tag">Secure Login</div>
+            <h1 className="auth-panel-h">Work, tracked.<br /><em>Results, delivered.</em></h1>
+            <p className="auth-panel-p">
+              Milestone-driven contracts, transparent payments,
+              and real-time oversight — all in one place.
+            </p>
+            <div className="auth-panel-stats">
+              <div className="auth-pstat">
+                <span className="auth-pstat-v">12K+</span>
+                <span className="auth-pstat-l">Active Projects</span>
+              </div>
+              <div className="auth-pstat">
+                <span className="auth-pstat-v">$4.2M</span>
+                <span className="auth-pstat-l">Paid Out</span>
+              </div>
+              <div className="auth-pstat">
+                <span className="auth-pstat-v">98%</span>
+                <span className="auth-pstat-l">Satisfaction</span>
+              </div>
+            </div>
+          </div>
+          <div className="auth-panel-stripe" />
         </div>
+      </div>
 
-        <div className="auth-card">
-          <form className="auth-form" onSubmit={handleSubmit}>
+      {/* Right panel — form */}
+      <div className="auth-panel auth-panel-right">
+        <div className="auth-form-wrap">
+          <div className="auth-form-head">
+            <h2 className="auth-form-title">Welcome back</h2>
+            <p className="auth-form-sub">Sign in to access your dashboard</p>
+          </div>
+
+          <form className="auth-form" onSubmit={handleSubmit} noValidate>
             {error && (
               <div className="auth-error">
+                <span className="auth-error-icon">!</span>
                 {error}
               </div>
             )}
@@ -63,8 +93,8 @@ export const LoginPage = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
-                placeholder="Ex. johndoe@company.com"
-                className="w-full border border-neutral-200 rounded-lg px-4 py-2 bg-white text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                placeholder="johndoe@company.com"
+                className="auth-input"
               />
             </div>
 
@@ -77,24 +107,26 @@ export const LoginPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
                 placeholder="••••••••"
-                className="w-full border border-neutral-200 rounded-lg px-4 py-2 bg-white text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                className="auth-input"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className={`w-full btn-primary ${loading ? 'auth-button-loading' : ''}`}
+              className={`auth-btn-submit ${loading ? 'is-loading' : ''}`}
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? (
+                <><span className="auth-spinner" /> Signing in...</>
+              ) : (
+                <>Sign in →</>
+              )}
             </button>
           </form>
 
           <div className="auth-footer">
             Don't have an account?{' '}
-            <Link to="/register" className="auth-link">
-              Create an account
-            </Link>
+            <Link to="/register" className="auth-link">Create an account</Link>
           </div>
         </div>
       </div>
