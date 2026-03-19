@@ -76,6 +76,7 @@ function App() {
                     <Route path="profile" element={<FreelancerProfilePage />} />
                     <Route path="tasks" element={<FreelancerTasksPage />} />
                     <Route path="milestones" element={<FreelancerMilestonesPage />} />
+                    <Route path="submit/:milestoneId" element={<FreelancerSubmitPage />} />
                     <Route path="performance" element={<FreelancerPerformancePage />} />
                   </Routes>
                 </Layout>
