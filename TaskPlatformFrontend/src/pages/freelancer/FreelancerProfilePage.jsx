@@ -9,6 +9,10 @@ export const FreelancerProfilePage = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState('');
+  
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState({ name: '', skills: '' });
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => { fetchProfile(); }, []);
 
@@ -16,6 +20,7 @@ export const FreelancerProfilePage = () => {
     try {
       const res = await api.get(`/freelancer/profile/${user.id}`);
       setProfile(res.data);
+      setEditData({ name: res.data.name || '', skills: res.data.skills || '' });
     } catch {
       setError('Failed to fetch profile');
     }
@@ -61,18 +66,77 @@ export const FreelancerProfilePage = () => {
             </div>
 
             <div className="freelancer-info-card">
-              <div className="freelancer-info-card-label">Name</div>
-              <div className="freelancer-info-card-value" style={{ fontSize: '22px' }}>
-                {profile.name || '—'}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="freelancer-info-card-label">Name</div>
+                {!isEditing && (
+                  <button onClick={() => setIsEditing(true)} className="btn-secondary btn-sm" style={{ padding: '2px 8px', fontSize: '12px' }}>
+                    Edit
+                  </button>
+                )}
               </div>
+              {isEditing ? (
+                <input 
+                  type="text" 
+                  value={editData.name} 
+                  onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                  style={{ width: '100%', marginTop: '8px', padding: '6px' }} 
+                  placeholder="Your full name"
+                />
+              ) : (
+                <div className="freelancer-info-card-value" style={{ fontSize: '22px' }}>
+                  {profile.name || '—'}
+                </div>
+              )}
             </div>
 
-            <div className="freelancer-info-card">
-              <div className="freelancer-info-card-label">Skills</div>
-              <div className="freelancer-info-card-value" style={{ fontSize: '16px', fontWeight: 500, letterSpacing: 0 }}>
-                {profile.skills || 'Not specified'}
+            <div className="freelancer-info-card" style={{ gridColumn: isEditing ? '1 / -1' : 'auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="freelancer-info-card-label">Skills</div>
+                {!isEditing && (
+                  <button onClick={() => setIsEditing(true)} className="btn-secondary btn-sm" style={{ padding: '2px 8px', fontSize: '12px' }}>
+                    Edit
+                  </button>
+                )}
               </div>
+              {isEditing ? (
+                <input 
+                  type="text" 
+                  value={editData.skills} 
+                  onChange={(e) => setEditData({ ...editData, skills: e.target.value })}
+                  style={{ width: '100%', marginTop: '8px', padding: '6px' }} 
+                  placeholder="e.g. React, Java, UI/UX"
+                />
+              ) : (
+                <div className="freelancer-info-card-value" style={{ fontSize: '16px', fontWeight: 500, letterSpacing: 0 }}>
+                  {profile.skills || 'Not specified'}
+                </div>
+              )}
             </div>
+
+            {isEditing && (
+              <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '10px', marginTop: '10px' }}>
+                <button 
+                  className="btn-primary" 
+                  disabled={saving}
+                  onClick={async () => {
+                    setSaving(true);
+                    try {
+                      await api.put(`/freelancer/profile/${user.id}`, editData);
+                      await fetchProfile();
+                      setIsEditing(false);
+                    } catch (err) {
+                      alert('Failed to update profile');
+                    }
+                    setSaving(false);
+                  }}
+                >
+                  {saving ? 'Saving...' : 'Save Profile'}
+                </button>
+                <button className="btn-secondary" onClick={() => { setIsEditing(false); setEditData({ name: profile.name || '', skills: profile.skills || '' }); }}>
+                  Cancel
+                </button>
+              </div>
+            )}
 
             <div className="freelancer-info-card">
               <div className="freelancer-info-card-label">Rating</div>

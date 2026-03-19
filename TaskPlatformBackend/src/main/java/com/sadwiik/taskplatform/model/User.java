@@ -2,6 +2,8 @@ package com.sadwiik.taskplatform.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.sadwiik.taskplatform.model.enums.AccountStatus;
+import com.sadwiik.taskplatform.model.enums.AccountStatusConverter;
 
 @Entity
 @Getter
@@ -27,6 +29,12 @@ public class User {
     @Column(nullable = false)
     private Double balance = 0.0;
 
+    @Convert(converter = AccountStatusConverter.class)
     @Column(nullable = false)
-    private String status = "ACTIVE";
+    private AccountStatus status = AccountStatus.OPEN;
+
+    private String name;
+    
+    @Column(length = 500)
+    private String skills;
 }

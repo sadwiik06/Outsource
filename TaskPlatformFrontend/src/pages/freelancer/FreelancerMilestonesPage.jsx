@@ -27,6 +27,7 @@ export const FreelancerMilestonesPage = () => {
 
   const getStatusClass = (status) => ({
     PAID: 'status-paid',
+    APPROVED: 'status-paid',
     FUNDED: 'status-funded',
     REJECTED: 'status-rejected',
     SUBMITTED: 'status-submitted',
@@ -91,13 +92,19 @@ export const FreelancerMilestonesPage = () => {
                       </span>
                     </td>
                     <td>
-                      <Link
-                        to={`/freelancer/submit/${m.id}`}
-                        className="btn-primary"
-                        style={{ padding: '6px 12px', fontSize: '13px', textDecoration: 'none', display: 'inline-block' }}
-                      >
-                        Submit
-                      </Link>
+                      {!['APPROVED', 'PAID', 'SUBMITTED'].includes(m.status) ? (
+                        <Link
+                          to={`/freelancer/submit/${m.id}`}
+                          className="btn-primary"
+                          style={{ padding: '6px 12px', fontSize: '13px', textDecoration: 'none', display: 'inline-block' }}
+                        >
+                          Submit
+                        </Link>
+                      ) : (
+                        <span style={{ color: 'var(--ink-3)', fontSize: '13px', fontWeight: 500 }}>
+                          {m.status === 'SUBMITTED' ? 'Under Review' : 'Completed'}
+                        </span>
+                      )}
                     </td>
                   </tr>
                 ))}

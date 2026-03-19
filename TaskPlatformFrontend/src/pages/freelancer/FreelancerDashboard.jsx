@@ -40,6 +40,7 @@ export const FreelancerDashboard = () => {
   const getStatusClass = (status) => {
     const map = {
       PAID:      'status-paid',
+      APPROVED:  'status-paid',
       FUNDED:    'status-funded',
       REJECTED:  'status-rejected',
       SUBMITTED: 'status-submitted',
@@ -112,15 +113,16 @@ export const FreelancerDashboard = () => {
                   </div>
                 ) : (
                   <div className="dashboard-list">
-                    {actionableMilestones.map(m => (
+                    {actionableMilestones.slice(0, 4).map(m => (
                       <div
                         key={m.id}
                         className={`action-card ${getCardModifier(m.status)}`}
                       >
                         <div className="action-card-head">
                           <div>
-                            <div className="action-card-task">{m.taskTitle}</div>
-                            <div className="action-card-milestone">{m.title}</div>
+                            <div className="action-card-milestone" style={{ fontWeight: 600 }}>
+                                {m.title} {m.taskTitle ? `- ${m.taskTitle}` : ''}
+                            </div>
                           </div>
                           <span className={`freelancer-status-badge ${getStatusClass(m.status)}`}>
                             {m.status}
@@ -142,6 +144,16 @@ export const FreelancerDashboard = () => {
                         </Link>
                       </div>
                     ))}
+                    
+                    {actionableMilestones.length > 4 && (
+                      <Link 
+                        to="/freelancer/milestones" 
+                        className="btn-secondary" 
+                        style={{ display: 'block', textAlign: 'center', marginTop: '10px' }}
+                      >
+                        View all {actionableMilestones.length} actionable milestones →
+                      </Link>
+                    )}
                   </div>
                 )}
               </section>

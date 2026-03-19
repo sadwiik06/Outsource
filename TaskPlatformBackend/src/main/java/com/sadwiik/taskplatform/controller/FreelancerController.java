@@ -20,13 +20,33 @@ public class FreelancerController {
     private FreelancerService freelancerService;
 
     @GetMapping("/profile/{freelancerId}")
-    public ResponseEntity<User> getProfile(@PathVariable Long freelancerId) {
+    public ResponseEntity<?> getProfile(@PathVariable Long freelancerId) {
         try {
             User profile = freelancerService.getFreelancerProfile(freelancerId)
                     .orElseThrow(() -> new RuntimeException("Freelancer not found"));
-            return ResponseEntity.ok(profile);
+                    
+            Double rating = null;
+            try {
+                Performance perf = freelancerService.getFreelancerPerformance(freelancerId);
+                rating = perf.getAvgRating();
+            } catch (Exception e) {
+                // Ignore if performance doesn't exist yet
+            }
+            
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("id", profile.getId());
+            response.put("email", profile.getEmail());
+            response.put("role", profile.getRole());
+            response.put("balance", profile.getBalance());
+            response.put("status", profile.getStatus());
+            response.put("name", profile.getName());
+            response.put("skills", profile.getSkills());
+            response.put("rating", rating);
+            
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage() != null ? e.getMessage() : e.toString());
         }
     }
 
@@ -51,10 +71,26 @@ public class FreelancerController {
     }
 
     @GetMapping("/performance/{freelancerId}")
-    public ResponseEntity<Performance> getPerformance(@PathVariable Long freelancerId) {
+    public ResponseEntity<?> getPerformance(@PathVariable Long freelancerId) {
         try {
             Performance performance = freelancerService.getFreelancerPerformance(freelancerId);
-            return ResponseEntity.ok(performance);
+            List<Milestone> milestones = freelancerService.getFreelancerMilestones(freelancerId);
+            int completedTasks = freelancerService.getTotalTasksCompleted(freelancerId);
+
+            double totalEarnings = milestones.stream()
+                    .filter(m -> "APPROVED".equals(m.getStatus()) || "PAID".equals(m.getStatus()))
+                    .mapToDouble(Milestone::getAmount)
+                    .sum();
+
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("completedTasks", completedTasks);
+            response.put("successRate", performance.getCompletionRate() != null ? performance.getCompletionRate() : 0.0);
+            response.put("totalEarnings", totalEarnings);
+            response.put("averageRating", performance.getAvgRating() != null ? performance.getAvgRating() : 0.0);
+            response.put("responseTime", performance.getOnTimeDeliveryRate() != null ? performance.getOnTimeDeliveryRate() : 0.0);
+            response.put("performanceLevel", performance.getPerformanceLevel());
+            response.put("onTimeDeliveryRate", performance.getOnTimeDeliveryRate() != null ? performance.getOnTimeDeliveryRate() : 0.0);
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }
@@ -108,12 +144,45 @@ public class FreelancerController {
         try {
             int completedTasks = freelancerService.getTotalTasksCompleted(freelancerId);
             double avgRating = freelancerService.getAverageRating(freelancerId);
-            return ResponseEntity.ok(new Object() {
-                public int completed_tasks = completedTasks;
-                public double avg_rating = avgRating;
-            });
+            
+            int totalTasksAssigned = freelancerService.getAssignedTasks(freelancerId).size();
+            List<Milestone> milestones = freelancerService.getFreelancerMilestones(freelancerId);
+            
+            long completedMilestones = milestones.stream()
+                    .filter(m -> "PAID".equals(m.getStatus()) || "APPROVED".equals(m.getStatus()))
+                    .count();
+                    
+            long pendingMilestones = milestones.stream()
+                    .filter(m -> !("PAID".equals(m.getStatus()) || "APPROVED".equals(m.getStatus()) || "REJECTED".equals(m.getStatus())))
+                    .count();
+                    
+            double totalEarned = milestones.stream()
+                    .filter(m -> "PAID".equals(m.getStatus()) || "APPROVED".equals(m.getStatus()))
+                    .mapToDouble(Milestone::getAmount)
+                    .sum();
+
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("completed_tasks", completedTasks);
+            response.put("avg_rating", avgRating);
+            response.put("totalTasksAssigned", totalTasksAssigned);
+            response.put("completedMilestones", completedMilestones);
+            response.put("pendingMilestones", pendingMilestones);
+            response.put("totalEarned", totalEarned);
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    @PutMapping("/profile/{freelancerId}")
+    public ResponseEntity<?> updateProfile(@PathVariable Long freelancerId, @RequestBody java.util.Map<String, String> updates) {
+        try {
+            String name = updates.get("name");
+            String skills = updates.get("skills");
+            User updatedUser = freelancerService.updateFreelancerProfile(freelancerId, name, skills);
+            return ResponseEntity.ok(updatedUser);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

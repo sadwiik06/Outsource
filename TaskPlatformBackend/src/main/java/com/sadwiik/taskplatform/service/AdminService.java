@@ -6,6 +6,7 @@ import com.sadwiik.taskplatform.model.Performance;
 import com.sadwiik.taskplatform.model.PaymentTransaction;
 import com.sadwiik.taskplatform.model.AuditLog;
 import com.sadwiik.taskplatform.repository.UserRepository;
+import com.sadwiik.taskplatform.model.enums.AccountStatus;
 import com.sadwiik.taskplatform.repository.TaskRepository;
 import com.sadwiik.taskplatform.repository.PerformanceRepository;
 import com.sadwiik.taskplatform.repository.PaymentRepository;
@@ -50,7 +51,7 @@ public class AdminService {
     public void suspendUser(Long userId, String reason) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found: " + userId));
-        user.setStatus("SUSPENDED");
+        user.setStatus(AccountStatus.CLOSED);
         userRepository.save(user);
         auditLogService.logAction(userId, "SUSPEND_USER", "USER", userId, "Reason: " + reason);
     }
@@ -58,7 +59,7 @@ public class AdminService {
     public void activateUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found: " + userId));
-        user.setStatus("ACTIVE");
+        user.setStatus(AccountStatus.ACTIVE);
         userRepository.save(user);
         auditLogService.logAction(userId, "ACTIVATE_USER", "USER", userId, "User reactivated");
     }

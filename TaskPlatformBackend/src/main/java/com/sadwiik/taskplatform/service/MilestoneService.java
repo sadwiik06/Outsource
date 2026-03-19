@@ -17,6 +17,8 @@ public class MilestoneService {
     private TaskRepository taskRepository;
     @Autowired
     private PaymentService paymentService;
+    @Autowired
+    private PerformanceService performanceService;
 
     public List<Milestone> suggestMilestones(Long taskId) {
 
@@ -27,8 +29,9 @@ public class MilestoneService {
             throw new RuntimeException("Task must be assigned to a freelancer before suggesting milestones");
         }
 
-        // 🔮 AI PLACEHOLDER (later replace with LLM call)
-        // NOTE: These ARE saved to DB with SUGGESTED status so they have IDs
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime taskDeadline = task.getDeadline() != null ? task.getDeadline() : now.plusDays(14);
+
         Milestone m1 = new Milestone();
         m1.setTask(task);
         m1.setFreelancerId(task.getFreelancerId());
@@ -38,6 +41,7 @@ public class MilestoneService {
         m1.setAmount(task.getTotalBudget() * 0.3);
         m1.setSequenceOrder(1);
         m1.setStatus("SUGGESTED");
+        m1.setDueDate(now.plusDays(3).isBefore(taskDeadline) ? now.plusDays(3) : taskDeadline);
 
         Milestone m2 = new Milestone();
         m2.setTask(task);
@@ -48,6 +52,7 @@ public class MilestoneService {
         m2.setAmount(task.getTotalBudget() * 0.5);
         m2.setSequenceOrder(2);
         m2.setStatus("SUGGESTED");
+        m2.setDueDate(now.plusDays(7).isBefore(taskDeadline) ? now.plusDays(7) : taskDeadline);
 
         Milestone m3 = new Milestone();
         m3.setTask(task);
@@ -58,6 +63,7 @@ public class MilestoneService {
         m3.setAmount(task.getTotalBudget() * 0.2);
         m3.setSequenceOrder(3);
         m3.setStatus("SUGGESTED");
+        m3.setDueDate(taskDeadline);
 
         return milestoneRepository.saveAll(List.of(m1, m2, m3));
     }
@@ -118,8 +124,25 @@ public class MilestoneService {
         milestone.setApprovalMessage(message);
         milestoneRepository.saveAndFlush(milestone);
 
+        // Auto-complete task if all milestones are done
+        checkAndCompleteTask(milestone.getTask());
+
+        // Update performance metrics
+        performanceService.updateScoreAfterApproval(milestoneId);
+
         // Automate payment release
         paymentService.releaseMilestonePayment(milestoneId);
+    }
+    
+    private void checkAndCompleteTask(Task task) {
+        List<Milestone> taskMilestones = milestoneRepository.findByTaskId(task.getId());
+        boolean allFinished = taskMilestones.stream()
+            .allMatch(m -> "APPROVED".equals(m.getStatus()) || "PAID".equals(m.getStatus()));
+            
+        if (allFinished && !"COMPLETED".equals(task.getStatus())) {
+            task.setStatus("COMPLETED");
+            taskRepository.save(task);
+        }
     }
 
     public List<Milestone> getMilestonesByClientId(Long clientId) {
