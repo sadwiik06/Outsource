@@ -31,6 +31,8 @@ public class ClientService {
     private PerformanceService performanceService;
     @Autowired
     private PerformanceRepository performanceRepository;
+    @Autowired
+    private FreelancerService freelancerService;
 
     public Task createTask(Task task) {
         task.setStatus("OPEN");
@@ -47,6 +49,9 @@ public class ClientService {
         task.setFreelancerId(freelancerId);
         task.setStatus("IN_PROGRESS");
         taskRepository.save(task);
+        
+        // Sync AI-suggested milestones to the newly hired freelancer
+        milestoneService.assignFreelancerToMilestones(taskId, freelancerId);
     }
 
     public void fundMilestone(Long milestoneId) {
@@ -63,6 +68,17 @@ public class ClientService {
         performanceService.updateScoreAfterRejection(milestoneId);
     }
 
+    public void rateFreelancer(Long taskId, Integer rating, String review) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        task.setClientRating(rating);
+        task.setClientReview(review);
+        taskRepository.save(task);
+        if (task.getFreelancerId() != null) {
+            performanceService.calculateFreelancerPerformance(task.getFreelancerId());
+        }
+    }
+
     public List<Milestone> getClientMilestones(Long clientId) {
         return milestoneService.getMilestonesByClientId(clientId);
     }
@@ -77,6 +93,25 @@ public class ClientService {
                             .orElse(new Performance());
                     return new FreelancerPerformanceDTO(freelancer.getId(), freelancer.getEmail(), performance);
                 }).collect(Collectors.toList());
+    }
+
+    public java.util.Map<String, Object> getFreelancerPublicProfile(Long freelancerId) {
+        User profile = freelancerService.getFreelancerProfile(freelancerId)
+                .orElseThrow(() -> new RuntimeException("Freelancer not found"));
+        Performance perf = freelancerService.getFreelancerPerformance(freelancerId);
+
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        response.put("id", profile.getId());
+        response.put("email", profile.getEmail());
+        response.put("name", profile.getName());
+        response.put("skills", profile.getSkills());
+        response.put("status", profile.getStatus());
+        response.put("performanceLevel", perf.getPerformanceLevel());
+        response.put("rating", perf.getAvgRating());
+        response.put("successRate", perf.getCompletionRate());
+        response.put("onTimeDelivery", perf.getOnTimeDeliveryRate());
+        
+        return response;
     }
 
     @Getter

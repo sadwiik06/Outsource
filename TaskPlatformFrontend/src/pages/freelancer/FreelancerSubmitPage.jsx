@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import api from '../../config/api';
+import './Freelancer.css';
 
 export const FreelancerSubmitPage = () => {
     const { milestoneId } = useParams();
@@ -21,7 +22,6 @@ export const FreelancerSubmitPage = () => {
 
     const fetchMilestone = async () => {
         try {
-            // We can use the generic milestones endpoint and filter, or a specific one if exists
             const res = await api.get(`/freelancer/milestones/${user.id}`);
             const m = res.data.find(item => item.id.toString() === milestoneId);
             if (m) {
@@ -53,74 +53,77 @@ export const FreelancerSubmitPage = () => {
         }
     };
 
-    if (loading) return <div style={{ padding: '20px' }}>Loading...</div>;
-    if (error) return <div style={{ padding: '20px', color: 'red' }}>{error}</div>;
-    if (!milestone) return <div style={{ padding: '20px' }}>No milestone found.</div>;
+    if (loading) return <div className="freelancer-container"><div className="freelancer-empty-state">Loading milestone...</div></div>;
+    if (error) return <div className="freelancer-container"><div className="freelancer-empty-state text-red-600">{error}</div></div>;
+    if (!milestone) return <div className="freelancer-container"><div className="freelancer-empty-state">No milestone found.</div></div>;
+
+    const getStatusClass = (status) => {
+        switch (status) {
+            case 'PAID': return 'status-paid';
+            case 'FUNDED': return 'status-funded';
+            case 'REJECTED': return 'status-rejected';
+            case 'SUBMITTED': return 'status-submitted';
+            default: return 'status-default';
+        }
+    };
 
     return (
-        <div style={{ padding: '40px', maxWidth: '800px', margin: '0 auto' }}>
-            <button onClick={() => navigate(-1)} style={{ marginBottom: '20px' }}>← Back</button>
+        <div className="freelancer-container !max-w-3xl">
+            <button
+                onClick={() => navigate(-1)}
+                className="btn-secondary w-fit text-sm mb-2 hover:bg-neutral-100"
+            >
+                ← Back to Dashboard
+            </button>
 
-            <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', border: '1px solid #eee' }}>
-                <h2 style={{ marginTop: 0, color: '#2196F3' }}>Submit Work for Milestone</h2>
-                <hr style={{ borderColor: '#f0f0f0', margin: '20px 0' }} />
+            <div className="freelancer-details-card !mt-0">
+                <div className="freelancer-details-header">
+                    <h3>Submit Work for Milestone</h3>
+                </div>
 
-                <div style={{ marginBottom: '20px' }}>
-                    <h3>{milestone.taskTitle}</h3>
+                <div className="freelancer-details-content">
+                    <h4 className="text-xl font-semibold text-neutral-900">{milestone.taskTitle}</h4>
                     <p><strong>Milestone:</strong> {milestone.title}</p>
-                    <p><strong>Status:</strong> <span style={{ fontWeight: 'bold', color: '#2196F3' }}>{milestone.status}</span></p>
+                    <p className="flex items-center gap-2">
+                        <strong>Status:</strong>
+                        <span className={`freelancer-status-badge ${getStatusClass(milestone.status)}`}>
+                            {milestone.status}
+                        </span>
+                    </p>
                     <p><strong>Amount:</strong> ${milestone.amount}</p>
+
                     {milestone.rejectionReason && (
-                        <div style={{ backgroundColor: '#ffebee', padding: '15px', borderRadius: '8px', borderLeft: '4px solid #f44336', marginTop: '10px' }}>
-                            <h4 style={{ margin: '0 0 5px 0', color: '#d32f2f' }}>Feedback to Address:</h4>
-                            <p style={{ margin: 0 }}>{milestone.rejectionReason}</p>
+                        <div className="freelancer-feedback-alert">
+                            <h4>Feedback to Address:</h4>
+                            <p>{milestone.rejectionReason}</p>
                         </div>
                     )}
                 </div>
 
-                <form onSubmit={handleSubmit} style={{ marginTop: '30px' }}>
-                    <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', fontSize: '1.1rem' }}>
+                <form onSubmit={handleSubmit} className="freelancer-submit-form">
+                    <label className="block text-sm font-medium text-neutral-700 mb-2">
                         Submission URL (GitHub, Drive, Figma, etc.):
                     </label>
                     <input
-                        type="text"
-                        placeholder="https://github.com/your-repo / https://figma.com/..."
+                        type="url"
+                        placeholder="https://github.com/your-repo or https://figma.com/..."
                         value={submissionUrl}
                         onChange={(e) => setSubmissionUrl(e.target.value)}
-                        style={{
-                            width: '100%',
-                            padding: '15px',
-                            fontSize: '1.1rem',
-                            borderRadius: '8px',
-                            border: '2px solid #2196F3',
-                            marginBottom: '20px',
-                            boxSizing: 'border-box'
-                        }}
+                        className="freelancer-input mb-4"
                         required
                     />
 
                     <button
                         type="submit"
-                        style={{
-                            width: '100%',
-                            padding: '15px',
-                            fontSize: '1.2rem',
-                            backgroundColor: '#4CAF50',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            fontWeight: 'bold',
-                            transition: 'background-color 0.2s'
-                        }}
+                        className="btn-primary w-full py-4 text-base"
                     >
                         CONFIRM AND SUBMIT WORK
                     </button>
-                </form>
 
-                <p style={{ marginTop: '20px', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
-                    The client will be notified immediately upon submission.
-                </p>
+                    <p className="text-center text-xs text-neutral-500 mt-4">
+                        The client will be notified immediately upon submission.
+                    </p>
+                </form>
             </div>
         </div>
     );

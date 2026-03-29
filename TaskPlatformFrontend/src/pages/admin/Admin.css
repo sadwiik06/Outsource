@@ -1,0 +1,237 @@
+/* ══════════════════════════════════════════════════
+   ADMIN.CSS — Admin dashboard specific styles
+   Extends Dashboard.css
+   Theme: Light SaaS × Subtle Neo-Brutalism
+   ══════════════════════════════════════════════════ */
+
+/* ── QUICK ACCESS NAV GRID ── */
+.admin-nav-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 1024px) {
+  .admin-nav-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 640px) {
+  .admin-nav-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.admin-nav-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 22px 16px;
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-brut);
+  font-family: var(--font-d);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+  transition: transform var(--trans), box-shadow var(--trans), background var(--trans);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.admin-nav-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--trans);
+}
+.admin-nav-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-brut-lg);
+  background: var(--paper);
+  color: var(--ink);
+}
+.admin-nav-card:hover::before {
+  transform: scaleX(1);
+}
+
+.admin-nav-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* ── SECTION DIVIDER ── */
+.admin-section-divider {
+  border: none;
+  border-top: 2px dashed var(--border-light);
+  margin: 0;
+}
+
+/* ── USER MANAGEMENT TABLE EXTRAS ── */
+.admin-user-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.btn-activate {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 5px 12px;
+  font-family: var(--font-d);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--accent-3);
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 2px 2px 0 var(--border);
+  cursor: pointer;
+  transition: transform var(--trans), box-shadow var(--trans);
+  white-space: nowrap;
+}
+.btn-activate:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--border);
+}
+
+.btn-suspend {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 5px 12px;
+  font-family: var(--font-d);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--red);
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 2px 2px 0 var(--border);
+  cursor: pointer;
+  transition: transform var(--trans), box-shadow var(--trans);
+  white-space: nowrap;
+}
+.btn-suspend:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--border);
+}
+
+/* ── ADMIN DETAIL CARDS ── */
+.admin-detail-card {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 22px;
+  box-shadow: var(--shadow-brut-md);
+  position: relative;
+  overflow: hidden;
+}
+.admin-detail-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: repeating-linear-gradient(
+    90deg, var(--accent-2) 0, var(--accent-2) 10px,
+    transparent 10px, transparent 14px
+  );
+}
+
+/* ── AUDIT LOG ROWS ── */
+.audit-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 13px 16px;
+  border-bottom: 1.5px solid var(--paper-2);
+  transition: background var(--trans);
+}
+.audit-row:last-child { border-bottom: none; }
+.audit-row:hover { background: var(--paper); }
+
+.audit-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+.audit-dot-create { background: var(--accent-3); border-color: #15803d; }
+.audit-dot-update { background: var(--accent-2); border-color: #4f46e5; }
+.audit-dot-delete { background: var(--red);      border-color: #b91c1c; }
+.audit-dot-auth   { background: var(--accent);   border-color: #ea580c; }
+.audit-dot-default{ background: var(--ink-4);    border-color: var(--border-light); }
+
+.audit-action {
+  font-family: var(--font-d);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.audit-meta {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-top: 2px;
+}
+.audit-time {
+  margin-left: auto;
+  font-family: var(--font-d);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-4);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ── PERFORMANCE LEVEL BADGE ── */
+.perf-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-family: var(--font-d);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  border: 1.5px solid;
+}
+.perf-high     { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; box-shadow: 2px 2px 0 #bbf7d0; }
+.perf-medium   { background: #fffbeb; color: #b45309; border-color: #fde68a; box-shadow: 2px 2px 0 #fde68a; }
+.perf-low      { background: #fff1f2; color: #be123c; border-color: #fecdd3; box-shadow: 2px 2px 0 #fecdd3; }
+.perf-default  { background: var(--paper); color: var(--ink-2); border-color: var(--border-light); }
+
+/* ── PAYMENT AMOUNT CELL ── */
+.payment-amount {
+  font-family: var(--font-d);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--accent-3);
+}
+
+/* ── ADMIN ROLE TAG ── */
+.role-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-family: var(--font-d);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  border: 1.5px solid;
+}
+.role-admin      { background: #f5f3ff; color: #6d28d9; border-color: #ddd6fe; box-shadow: 2px 2px 0 #ddd6fe; }
+.role-client     { background: #fff7ed; color: #c2410c; border-color: #fed7aa; box-shadow: 2px 2px 0 #fed7aa; }
+.role-freelancer { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; box-shadow: 2px 2px 0 #bfdbfe; }

@@ -19,6 +19,9 @@ public class FreelancerService {
 
     @Autowired
     private MilestoneService milestoneService;
+    
+    @Autowired
+    private PerformanceService performanceService;
 
     @Autowired
     private UserRepository userRepository;
@@ -36,7 +39,42 @@ public class FreelancerService {
     private AuditLogService auditLogService;
 
     public Optional<User> getFreelancerProfile(Long freelancerId) {
-        return userRepository.findById(freelancerId);
+        return userRepository.findById(freelancerId).map(user -> {
+            
+            // Retroactive self-healing: automatically complete tasks if all milestones are done
+            taskRepository.findByFreelancerId(freelancerId).stream()
+                .filter(t -> !"COMPLETED".equals(t.getStatus()))
+                .forEach(t -> {
+                    List<Milestone> tMs = milestoneRepository.findByTaskId(t.getId());
+                    if (!tMs.isEmpty() && tMs.stream().allMatch(m -> "APPROVED".equals(m.getStatus()) || "PAID".equals(m.getStatus()))) {
+                        t.setStatus("COMPLETED");
+                        taskRepository.save(t);
+                        performanceService.calculateFreelancerPerformance(freelancerId);
+                    }
+                });
+
+            if (user.getStatus() != com.sadwiik.taskplatform.model.enums.AccountStatus.CLOSED) {
+                long activeTasks = taskRepository.findByFreelancerId(freelancerId).stream()
+                        .filter(t -> "IN_PROGRESS".equals(t.getStatus()) || "OPEN".equals(t.getStatus()))
+                        .count();
+                com.sadwiik.taskplatform.model.enums.AccountStatus computedStatus = 
+                        activeTasks > 0 ? com.sadwiik.taskplatform.model.enums.AccountStatus.ACTIVE : com.sadwiik.taskplatform.model.enums.AccountStatus.OPEN;
+                        
+                if (user.getStatus() != computedStatus) {
+                    user.setStatus(computedStatus);
+                    userRepository.save(user);
+                }
+            }
+            return user;
+        });
+    }
+    
+    public User updateFreelancerProfile(Long freelancerId, String name, String skills) {
+        User user = userRepository.findById(freelancerId)
+                .orElseThrow(() -> new RuntimeException("Freelancer not found"));
+        user.setName(name);
+        user.setSkills(skills);
+        return userRepository.save(user);
     }
 
     public List<Task> getAssignedTasks(Long freelancerId) {
@@ -48,9 +86,7 @@ public class FreelancerService {
     }
 
     public Performance getFreelancerPerformance(Long freelancerId) {
-        return performanceRepository.findByUserId(freelancerId)
-                .orElseThrow(
-                        () -> new RuntimeException("Performance record not found for freelancer: " + freelancerId));
+        return performanceService.calculateFreelancerPerformance(freelancerId);
     }
 
     public Milestone getMilestone(Long milestoneId) {

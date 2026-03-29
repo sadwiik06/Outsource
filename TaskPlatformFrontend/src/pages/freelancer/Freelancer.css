@@ -1,0 +1,306 @@
+/* ══════════════════════════════════════════════════
+   FREELANCER.CSS — Freelancer-specific styles
+   Extends Dashboard.css with role-specific overrides
+   Theme: Light SaaS × Subtle Neo-Brutalism
+   ══════════════════════════════════════════════════ */
+
+/* ── ACTION REQUIRED CARD ── */
+.action-card {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 22px;
+  box-shadow: var(--shadow-brut-md);
+  transition: transform var(--trans), box-shadow var(--trans);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Left accent bar by status */
+.action-card::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: 0;
+  width: 4px;
+  background: var(--accent-3);
+  border-radius: 0;
+}
+.action-card--rejected::before { background: var(--red); }
+.action-card--suggested::before { background: var(--accent-2); }
+.action-card--funded::before   { background: var(--accent); }
+
+.action-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-brut-lg);
+}
+
+.action-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 6px;
+}
+
+.action-card-task {
+  font-family: var(--font-d);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.action-card-milestone {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink-3);
+  margin-top: 3px;
+}
+
+.action-card-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  margin-top: 18px;
+  padding: 11px 20px;
+  font-family: var(--font-d);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--accent-3);
+  border: 2px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-brut);
+  cursor: pointer;
+  transition: transform var(--trans), box-shadow var(--trans);
+  text-decoration: none;
+}
+.action-card-submit-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-brut-lg);
+  color: var(--white);
+}
+.action-card-submit-btn--resubmit {
+  background: var(--red);
+}
+
+/* ── TASK SIDEBAR CARDS ── */
+.task-sidebar-card {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-brut);
+  transition: transform var(--trans), box-shadow var(--trans);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.task-sidebar-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-brut-lg);
+}
+
+.task-sidebar-name {
+  font-family: var(--font-d);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── FREELANCER INFO CARDS (stats variant with color accent) ── */
+.freelancer-info-card {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 20px 18px;
+  box-shadow: var(--shadow-brut-md);
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--trans), box-shadow var(--trans);
+}
+.freelancer-info-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-brut-lg);
+}
+.freelancer-info-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: repeating-linear-gradient(
+    90deg, var(--accent-2) 0, var(--accent-2) 10px,
+    transparent 10px, transparent 14px
+  );
+}
+
+.freelancer-info-card-label {
+  font-family: var(--font-d);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 8px;
+  margin-top: 8px;
+}
+
+.freelancer-info-card-value {
+  font-family: var(--font-d);
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -2px;
+  color: var(--ink);
+  line-height: 1;
+}
+
+/* ── FREELANCER TABLE ── */
+.freelancer-table-container {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-brut-md);
+  overflow: hidden;
+}
+
+.freelancer-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+.freelancer-table th {
+  padding: 11px 16px;
+  background: var(--paper);
+  font-family: var(--font-d);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 2px solid var(--border);
+}
+.freelancer-table td {
+  padding: 12px 16px;
+  font-size: 13.5px;
+  color: var(--ink);
+  border-bottom: 1.5px solid var(--paper-2);
+  vertical-align: middle;
+}
+.freelancer-table tbody tr:last-child td { border-bottom: none; }
+.freelancer-table tbody tr { transition: background var(--trans); }
+.freelancer-table tbody tr:hover { background: var(--paper); }
+
+/* ── SUBMISSION FORM AREA ── */
+.freelancer-submit-form {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 2px dashed var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.freelancer-submit-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+/* ── SUCCESS / EMPTY STATES ── */
+.freelancer-empty-state {
+  text-align: center;
+  padding: 44px 20px;
+  border: 2px dashed var(--border-light);
+  border-radius: var(--r-lg);
+  background: var(--paper);
+  font-size: 13.5px;
+  color: var(--ink-3);
+}
+
+/* ── MODAL DETAIL HEADER ── */
+.freelancer-details-card {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-brut-md);
+}
+
+.freelancer-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--border);
+}
+
+.freelancer-details-header h3 {
+  font-family: var(--font-d);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+}
+
+/* ── FREELANCER GRID ── */
+.freelancer-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) {
+  .freelancer-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+  .freelancer-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ── FREELANCER ACTION BUTTON (table inline) ── */
+.freelancer-action-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  font-family: var(--font-d);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1.5px solid var(--border-light);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all var(--trans);
+  box-shadow: 1px 1px 0 var(--border-light);
+}
+.freelancer-action-btn:hover {
+  background: var(--ink);
+  color: var(--white);
+  border-color: var(--border);
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0 var(--border);
+}
+
+/* ── SECTION HEADER ROW ── */
+.freelancer-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.freelancer-section-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.freelancer-section-title {
+  font-family: var(--font-d);
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.3px;
+}

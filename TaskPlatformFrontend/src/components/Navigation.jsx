@@ -1,22 +1,45 @@
 import React, { useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import './Navigation.css';
 
 export const Navigation = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
+  const NavLink = ({ to, children }) => {
+    const isActive = location.pathname.startsWith(to);
+    return (
+      <Link
+        to={to}
+        className={`nav-link ${isActive ? 'nav-link-active' : ''}`}
+      >
+        {children}
+      </Link>
+    );
+  };
+
   if (!user) {
     return (
-      <nav>
-        <Link to="/login">Login</Link>
-        <Link to="/register">Register</Link>
-      </nav>
+      <header className="nav-header">
+        <div className="nav-container">
+          <div className="nav-wrapper">
+            <div className="nav-brand">
+              <Link to="/" className="nav-brand-link">TaskPlatform.</Link>
+            </div>
+            <div className="nav-auth-wrapper">
+              <Link to="/login" className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">Log in</Link>
+              <Link to="/register" className="btn-primary text-sm py-1.5 px-3">Sign up</Link>
+            </div>
+          </div>
+        </div>
+      </header>
     );
   }
 
@@ -47,21 +70,38 @@ export const Navigation = () => {
   const links = navLinks[user.role] || [];
 
   return (
-    <nav>
-      <div>
-        <h3>TaskPlatform</h3>
+    <header className="nav-header">
+      <div className="nav-container">
+        <div className="nav-wrapper">
+          <div className="nav-brand">
+            <Link to="/" className="nav-brand-link">TaskPlatform.</Link>
+            <nav className="nav-items-wrapper">
+              {links.map(link => (
+                <NavLink key={link.to} to={link.to}>
+                  {link.label}
+                </NavLink>
+              ))}
+            </nav>
+          </div>
+
+          <div className="nav-user-info">
+            <div className="nav-user-details">
+              <span className="nav-user-role">{user.role}</span>
+              <span className="nav-user-email">{user.email}</span>
+            </div>
+            <div className="nav-user-avatar">
+              {user.email ? user.email.charAt(0).toUpperCase() : 'U'}
+            </div>
+
+            <button
+              onClick={handleLogout}
+              className="text-sm font-medium text-neutral-500 hover:text-red-600 transition-colors bg-transparent border-none p-0 cursor-pointer ml-3"
+            >
+              Sign out
+            </button>
+          </div>
+        </div>
       </div>
-      <div>
-        {links.map(link => (
-          <Link key={link.to} to={link.to}>
-            {link.label}
-          </Link>
-        ))}
-      </div>
-      <div>
-        <p>{user.email} ({user.role})</p>
-        <button onClick={handleLogout}>Logout</button>
-      </div>
-    </nav>
+    </header>
   );
 };

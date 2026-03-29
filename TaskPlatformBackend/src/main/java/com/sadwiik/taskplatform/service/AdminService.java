@@ -6,6 +6,7 @@ import com.sadwiik.taskplatform.model.Performance;
 import com.sadwiik.taskplatform.model.PaymentTransaction;
 import com.sadwiik.taskplatform.model.AuditLog;
 import com.sadwiik.taskplatform.repository.UserRepository;
+import com.sadwiik.taskplatform.model.enums.AccountStatus;
 import com.sadwiik.taskplatform.repository.TaskRepository;
 import com.sadwiik.taskplatform.repository.PerformanceRepository;
 import com.sadwiik.taskplatform.repository.PaymentRepository;
@@ -50,13 +51,16 @@ public class AdminService {
     public void suspendUser(Long userId, String reason) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found: " + userId));
-        // Mark user as suspended (could add a suspended field to User model)
+        user.setStatus(AccountStatus.CLOSED);
+        userRepository.save(user);
         auditLogService.logAction(userId, "SUSPEND_USER", "USER", userId, "Reason: " + reason);
     }
 
     public void activateUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+        user.setStatus(AccountStatus.ACTIVE);
+        userRepository.save(user);
         auditLogService.logAction(userId, "ACTIVATE_USER", "USER", userId, "User reactivated");
     }
 
@@ -79,7 +83,7 @@ public class AdminService {
         auditLogService.logAction(0L, "CANCEL_TASK", "TASK", taskId, "Reason: " + reason);
     }
 
-    // ---- PAYMENT MANAGEMENT ----
+    // ---- PAYMENT
     public List<PaymentTransaction> getAllPayments() {
         return paymentRepository.findAll();
     }

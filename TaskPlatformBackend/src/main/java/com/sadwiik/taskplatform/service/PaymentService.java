@@ -4,8 +4,10 @@ import com.sadwiik.taskplatform.model.*;
 import com.sadwiik.taskplatform.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class PaymentService {
         @Autowired
         private PaymentRepository paymentRepository;
@@ -24,21 +26,21 @@ public class PaymentService {
                 Task task = taskRepository.findById(milestone.getTask().getId())
                                 .orElseThrow(() -> new RuntimeException("Task not found"));
 
-                /*
-                 * User client = userRepository.findById(task.getClientId())
-                 * .orElseThrow(() -> new RuntimeException("Client not found"));
-                 */
+                
+                User client = userRepository.findById(task.getClientId())
+                .orElseThrow(() -> new RuntimeException("Client not found"));
+                
 
-                /*
-                 * if (client.getBalance() < milestone.getAmount()) {
-                 * throw new RuntimeException("Insufficient balance to fund milestone: " +
-                 * milestone.getId());
-                 * }
-                 * 
-                 * // Deduct from client
-                 * client.setBalance(client.getBalance() - milestone.getAmount());
-                 * userRepository.save(client);
-                 */
+                
+                if (client.getBalance() < milestone.getAmount()) {
+                throw new RuntimeException("Insufficient balance to fund milestone: " +
+                milestone.getId());
+                }
+                
+                // Deduct from client
+                client.setBalance(client.getBalance() - milestone.getAmount());
+                userRepository.save(client);
+                
 
                 PaymentTransaction tx = new PaymentTransaction();
                 tx.setTaskId(task.getId());
@@ -78,15 +80,15 @@ public class PaymentService {
                 }
 
                 // Move money to freelancer
-                /*
-                 * User freelancer = userRepository.findById(tx.getPayeeId())
-                 * .orElseThrow(() -> new RuntimeException("Freelancer not found"));
-                 */
+                
+                User freelancer = userRepository.findById(tx.getPayeeId())
+                .orElseThrow(() -> new RuntimeException("Freelancer not found"));
+                
 
-                /*
-                 * freelancer.setBalance(freelancer.getBalance() + tx.getAmount());
-                 * userRepository.save(freelancer);
-                 */
+        
+                freelancer.setBalance(freelancer.getBalance() + tx.getAmount());
+                userRepository.save(freelancer);
+                
 
                 // Update transaction and milestone status
                 tx.setStatus("RELEASED");

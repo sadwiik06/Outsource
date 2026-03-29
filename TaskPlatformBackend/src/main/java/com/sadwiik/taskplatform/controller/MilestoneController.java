@@ -66,4 +66,24 @@ public class MilestoneController {
     public ResponseEntity<List<Milestone>> getMilestonesByTaskId(@PathVariable Long taskId) {
         return ResponseEntity.ok(milestoneService.getMilestonesByTaskId(taskId));
     }
+    @PostMapping("/ownmilestone/{milestoneId}")
+    public ResponseEntity<Milestone> createownmilestone(@RequestBody Milestone details){
+        milestoneService.createownmilestone(details);
+        return ResponseEntity.ok(details);
+    }
+
+    @PutMapping("/ownmilestone/{milestoneId}")
+    public ResponseEntity<Milestone> updateownmilestone(@PathVariable Long milestoneId, @RequestBody Milestone details){
+        milestoneService.updateownmilestone(milestoneId, details);
+        return ResponseEntity.ok(details);
+    }
+
+    @DeleteMapping("/ownmilestone/{milestoneId}")
+    public ResponseEntity<String> deleteownmilestone(@PathVariable Long id){
+        milestoneService.deleteownmilestone(id);
+        return ResponseEntity.ok("Milestone deleted successfully");
+    }
+    
+
+    
 }

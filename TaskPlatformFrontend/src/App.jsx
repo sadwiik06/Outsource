@@ -6,7 +6,7 @@ import { Layout } from './components/Layout';
 import './App.css';
 
 // Pages
-import { HomePage } from './pages/HomePage';
+import HomePage from './pages/HomePage';
 
 // Auth Pages
 import { LoginPage } from './pages/auth/LoginPage';
@@ -18,6 +18,7 @@ import { CreateTaskPage } from './pages/client/CreateTaskPage';
 import { ClientTasksPage } from './pages/client/ClientTasksPage';
 import { ClientMilestonesPage } from './pages/client/ClientMilestonesPage';
 import { TaskMilestonesPage } from './pages/client/TaskMilestonesPage';
+import { PublicFreelancerProfile } from './pages/PublicFreelancerProfile';
 
 // Freelancer Pages
 import { FreelancerDashboard } from './pages/freelancer/FreelancerDashboard';
@@ -65,6 +66,18 @@ function App() {
             }
           />
 
+          {/* Public Profile Route (authenticated but not restricted by role) */}
+          <Route
+            path="/freelancer-profile/:id"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <PublicFreelancerProfile />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
           {/* Freelancer Routes */}
           <Route
             path="/freelancer/*"
@@ -76,6 +89,7 @@ function App() {
                     <Route path="profile" element={<FreelancerProfilePage />} />
                     <Route path="tasks" element={<FreelancerTasksPage />} />
                     <Route path="milestones" element={<FreelancerMilestonesPage />} />
+                    <Route path="submit/:milestoneId" element={<FreelancerSubmitPage />} />
                     <Route path="performance" element={<FreelancerPerformancePage />} />
                   </Routes>
                 </Layout>

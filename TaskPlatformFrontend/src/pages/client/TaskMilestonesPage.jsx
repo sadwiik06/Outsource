@@ -1,232 +1,300 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { clientTaskService } from '../../services/taskService';
 import { taskService } from '../../services/taskService';
+import '../Dashboard.css';
+import './Client.css';
 
 export const TaskMilestonesPage = () => {
-  const { taskId } = useParams();
+  const { taskId }    = useParams();
+  const navigate      = useNavigate();
   const { user, refreshUser } = useContext(AuthContext);
-  const [task, setTask] = useState(null);
-  const [milestones, setMilestones] = useState([]);
+
+  const [task, setTask]                           = useState(null);
+  const [milestones, setMilestones]               = useState([]);
   const [selectedMilestones, setSelectedMilestones] = useState([]);
-  const [rejectionReasons, setRejectionReasons] = useState({});
+  const [rejectionReasons, setRejectionReasons]   = useState({});
+  const [loading, setLoading]                     = useState(true);
 
-  useEffect(() => {
-    if (taskId) {
-      loadTaskAndMilestones();
-    }
-  }, [taskId]);
+  useEffect(() => { if (taskId) loadAll(); }, [taskId]);
 
-  const loadTaskAndMilestones = async () => {
+  const loadAll = async () => {
+    setLoading(true);
     try {
-      const taskRes = await taskService.getTaskById(taskId);
+      const [taskRes, milestoneRes] = await Promise.all([
+        taskService.getTaskById(taskId),
+        clientTaskService.getMilestonesByTaskId(taskId),
+      ]);
       setTask(taskRes.data);
-      const milestoneRes = await clientTaskService.getMilestonesByTaskId(taskId);
       setMilestones(milestoneRes.data);
-      // Automatically select suggested milestones
-      const suggestedIds = milestoneRes.data
-        .filter(m => m.status === 'SUGGESTED')
-        .map(m => m.id);
+      const suggestedIds = milestoneRes.data.filter(m => m.status === 'SUGGESTED').map(m => m.id);
       setSelectedMilestones(suggestedIds);
-
       const reasons = {};
       milestoneRes.data.forEach(m => reasons[m.id] = '');
       setRejectionReasons(reasons);
       refreshUser();
     } catch (err) {
-      console.error("Failed to load task/milestones", err);
+      console.error('Failed to load task/milestones', err);
     }
+    setLoading(false);
   };
 
-  const handleReasonChange = (id, reason) => {
+  const handleReasonChange = (id, reason) =>
     setRejectionReasons(prev => ({ ...prev, [id]: reason }));
+
+  const toggleMilestone = (id, checked) => {
+    setSelectedMilestones(prev =>
+      checked ? [...prev, id] : prev.filter(x => x !== id)
+    );
   };
 
-  const handleSuggestMilestones = () => {
-    clientTaskService.getSuggestedMilestones(taskId).then(response => {
-      setMilestones(response.data);
-      const suggestedIds = response.data.map(m => m.id);
-      setSelectedMilestones(suggestedIds);
-    }).catch(err => alert("Error suggesting milestones: " + err.message));
+  const handleSuggest = () => {
+    clientTaskService.getSuggestedMilestones(taskId)
+      .then(r => {
+        setMilestones(r.data);
+        setSelectedMilestones(r.data.map(m => m.id));
+      })
+      .catch(err => alert('Error: ' + err.message));
   };
 
-  const handleConfirmMilestones = () => {
-    if (selectedMilestones.length === 0) {
-      alert("Please select milestones to confirm");
-      return;
-    }
-    clientTaskService.confirmMilestones(taskId, selectedMilestones).then(() => {
-      alert('Milestones confirmed and funded!');
-      loadTaskAndMilestones();
-    }).catch(err => alert("Error confirming milestones: " + err.message));
+  const handleConfirm = () => {
+    if (selectedMilestones.length === 0) { alert('Select at least one milestone'); return; }
+    clientTaskService.confirmMilestones(taskId, selectedMilestones)
+      .then(() => { alert('Milestones confirmed and funded!'); loadAll(); })
+      .catch(err => alert('Error: ' + err.message));
   };
 
-  const handleFundMilestone = (milestoneId) => {
-    clientTaskService.fundMilestone(milestoneId).then(() => {
-      alert('Milestone funded!');
-      loadTaskAndMilestones();
-    }).catch(err => alert("Error funding milestone: " + err.message));
+  const handleFund = (milestoneId) => {
+    clientTaskService.fundMilestone(milestoneId)
+      .then(() => { alert('Milestone funded!'); loadAll(); })
+      .catch(err => alert('Error: ' + err.message));
   };
 
-  const handleApproveMilestone = (milestoneId) => {
+  const handleApprove = (milestoneId) => {
     const message = rejectionReasons[milestoneId];
-    clientTaskService.approveMilestone(milestoneId, { message }).then(() => {
-      alert('Milestone approved and payment released!');
-      loadTaskAndMilestones();
-    }).catch(err => {
-      const msg = err.response?.data || err.message;
-      alert("Error approving milestone: " + msg);
-    });
+    clientTaskService.approveMilestone(milestoneId, { message })
+      .then(() => { alert('Approved and payment released!'); loadAll(); })
+      .catch(err => alert('Error: ' + (err.response?.data || err.message)));
   };
 
-  const handleRejectMilestone = (milestoneId) => {
+  const handleReject = (milestoneId) => {
     const reason = rejectionReasons[milestoneId];
-    if (!reason) {
-      alert('Please enter feedback for rejection');
-      return;
-    }
-    clientTaskService.rejectMilestone(milestoneId, { reason }).then(() => {
-      alert('Milestone rejected');
-      loadTaskAndMilestones();
-    }).catch(err => {
-      const msg = err.response?.data || err.message;
-      alert("Error rejecting milestone: " + msg);
-    });
+    if (!reason) { alert('Please enter feedback for rejection'); return; }
+    clientTaskService.rejectMilestone(milestoneId, { reason })
+      .then(() => { alert('Milestone rejected'); loadAll(); })
+      .catch(err => alert('Error: ' + (err.response?.data || err.message)));
   };
+
+  const getStatusClass = (status) => ({
+    PAID: 'status-paid', FUNDED: 'status-funded',
+    REJECTED: 'status-rejected', SUBMITTED: 'status-submitted',
+    SUGGESTED: 'status-pending',
+  })[status] || 'status-default';
+
+  if (loading) return (
+    <div className="dashboard-wrapper">
+      <div className="dashboard-container"><div className="dash-loading">Loading milestones...</div></div>
+    </div>
+  );
+
+  const hasSuggested = milestones.some(m => m.status === 'SUGGESTED');
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Manage Milestones for {task?.title}</h2>
-      <p>Budget: ${task?.totalBudget}</p>
+    <div className="dashboard-wrapper">
+      <div className="dashboard-container">
 
-      {milestones.length === 0 && (
-        <button
-          onClick={handleSuggestMilestones}
-          style={{ padding: '10px 20px', backgroundColor: '#2196F3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-        >
-          AI Suggest Milestones
+        {/* Back */}
+        <button className="btn-secondary btn-sm" style={{ width: 'fit-content' }} onClick={() => navigate(-1)}>
+          ← Back
         </button>
-      )}
 
-      <div style={{ marginTop: '20px' }}>
-        {milestones.map(milestone => (
-          <div key={milestone.id} style={{
-            border: '1px solid #ddd',
-            margin: '10px 0',
-            padding: '15px',
-            borderRadius: '8px',
-            backgroundColor: milestone.status === 'SUGGESTED' ? '#fff9c4' : '#fff'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <h4 style={{ margin: '0 0 5px 0' }}>{milestone.title}</h4>
-                <p style={{ margin: '0', fontSize: '14px', color: '#666' }}>{milestone.description}</p>
-                <p style={{ margin: '5px 0 0 0' }}><strong>Amount:</strong> ${milestone.amount}</p>
-                <p style={{ margin: '5px 0 0 0' }}><strong>Status:</strong> <span style={{
-                  padding: '2px 8px',
-                  borderRadius: '4px',
-                  backgroundColor: milestone.status === 'PAID' ? '#c8e6c9' : (milestone.status === 'FUNDED' ? '#b3e5fc' : (milestone.status === 'REJECTED' ? '#ffcdd2' : '#eee')),
-                  fontSize: '12px'
-                }}>{milestone.status}</span></p>
-                {milestone.submissionUrl && (
-                  <p style={{ margin: '5px 0 0 0' }}><strong>Submission:</strong> <a href={milestone.submissionUrl} target="_blank" rel="noopener noreferrer">{milestone.submissionUrl}</a></p>
-                )}
-                {milestone.rejectionReason && (
-                  <p style={{ margin: '5px 0 0 0', color: '#d32f2f', fontSize: '13px' }}><strong>Rejection Reason:</strong> {milestone.rejectionReason}</p>
-                )}
-              </div>
+        {/* Header */}
+        <div className="dashboard-header">
+          <div className="dashboard-header-title">
+            <h2>Manage Milestones</h2>
+            <p className="dashboard-header-text">
+              {task?.title}
+              {task?.totalBudget && (
+                <span style={{
+                  marginLeft: '12px',
+                  fontFamily: 'var(--font-d)', fontWeight: 700,
+                  fontSize: '13px', color: 'var(--accent-3)',
+                  background: '#f0fdf4', border: '1.5px solid #bbf7d0',
+                  borderRadius: '100px', padding: '2px 10px',
+                  boxShadow: '2px 2px 0 #bbf7d0',
+                }}>
+                  Budget: ${task.totalBudget}
+                </span>
+              )}
+            </p>
+          </div>
+          <div className="dashboard-header-actions">
+            {milestones.length === 0 && (
+              <button className="btn-accent" onClick={handleSuggest}>
+                ✦ AI Suggest Milestones
+              </button>
+            )}
+            {hasSuggested && (
+              <button className="btn-primary" onClick={handleConfirm}>
+                ✓ Confirm & Fund Selected
+              </button>
+            )}
+          </div>
+        </div>
 
-              <div>
-                {milestone.status === 'SUGGESTED' && (
-                  <input
-                    type="checkbox"
-                    checked={selectedMilestones.includes(milestone.id)}
-                    onChange={e => {
-                      if (e.target.checked) {
-                        setSelectedMilestones([...selectedMilestones, milestone.id]);
-                      } else {
-                        setSelectedMilestones(selectedMilestones.filter(id => id !== milestone.id));
-                      }
-                    }}
-                    style={{ transform: 'scale(1.5)' }}
-                  />
-                )}
-                {milestone.status === 'SUBMITTED' && (
-                  <div style={{
-                    marginTop: '15px',
-                    padding: '20px',
-                    backgroundColor: '#f9f9f9',
-                    borderRadius: '12px',
-                    border: '1px solid #eee',
-                    width: '100%'
-                  }}>
-                    <h5 style={{ margin: '0 0 15px 0', fontSize: '1.1rem', color: '#333' }}>Review Milestone Work</h5>
-                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', color: '#666' }}>Feedback for Freelancer (Optional for approval):</label>
-                    <textarea
-                      placeholder="Explain what needs to be improved or why you are approving..."
-                      value={rejectionReasons[milestone.id] || ''}
-                      onChange={(e) => handleReasonChange(milestone.id, e.target.value)}
-                      style={{
-                        width: '100%',
-                        height: '80px',
-                        padding: '12px',
-                        borderRadius: '8px',
-                        border: '1px solid #ccc',
-                        marginBottom: '15px',
-                        boxSizing: 'border-box'
+        {/* Milestone list */}
+        {milestones.length === 0 ? (
+          <div className="empty-state">
+            No milestones yet — use AI Suggest to generate them automatically.
+          </div>
+        ) : (
+          <div className="dashboard-list">
+            {milestones.map(m => (
+              <div
+                key={m.id}
+                className="review-card"
+                style={{
+                  borderLeftColor: m.status === 'SUGGESTED' ? 'var(--accent-2)'
+                    : m.status === 'SUBMITTED' ? '#f59e0b'
+                    : m.status === 'PAID'    ? 'var(--accent-3)'
+                    : m.status === 'REJECTED' ? 'var(--red)'
+                    : 'var(--border-light)',
+                }}
+              >
+                {/* Top row */}
+                <div style={{
+                  display: 'flex', justifyContent: 'space-between',
+                  alignItems: 'flex-start', gap: '16px', marginBottom: '12px',
+                }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div className="review-card-title">{m.title}</div>
+                    {m.description && (
+                      <p style={{ fontSize: '13px', color: 'var(--ink-3)', marginTop: '4px', lineHeight: 1.6 }}>
+                        {m.description}
+                      </p>
+                    )}
+                    <div style={{ display: 'flex', gap: '14px', marginTop: '10px', flexWrap: 'wrap' }}>
+                      <span style={{
+                        fontFamily: 'var(--font-d)', fontWeight: 700,
+                        fontSize: '13px', color: 'var(--accent-3)',
+                      }}>
+                        ${m.amount}
+                      </span>
+                      <span className={`status-badge ${getStatusClass(m.status)}`}>{m.status}</span>
+                    </div>
+
+                    {m.submissionUrl && (
+                      <div style={{ marginTop: '8px' }}>
+                        <span style={{ fontSize: '12px', color: 'var(--ink-3)', fontWeight: 600 }}>
+                          Submission:{' '}
+                        </span>
+                        <a
+                          href={m.submissionUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            fontSize: '12px', color: 'var(--accent-2)',
+                            textDecoration: 'underline', textUnderlineOffset: '3px',
+                            wordBreak: 'break-all',
+                          }}
+                        >
+                          {m.submissionUrl}
+                        </a>
+                      </div>
+                    )}
+
+                    {m.rejectionReason && (
+                      <div className="freelancer-feedback-alert" style={{ marginTop: '10px' }}>
+                        <h4>🚩 Rejection Reason</h4>
+                        <p>{m.rejectionReason}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Checkbox for SUGGESTED */}
+                  {m.status === 'SUGGESTED' && (
+                    <div style={{
+                      display: 'flex', flexDirection: 'column',
+                      alignItems: 'center', gap: '6px', flexShrink: 0,
+                    }}>
+                      <div style={{
+                        width: '22px', height: '22px',
+                        border: '2px solid var(--border)',
+                        borderRadius: '5px',
+                        background: selectedMilestones.includes(m.id) ? 'var(--ink)' : 'var(--white)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        cursor: 'pointer',
+                        transition: 'background var(--trans)',
+                        boxShadow: '2px 2px 0 var(--border)',
                       }}
+                        onClick={() => toggleMilestone(m.id, !selectedMilestones.includes(m.id))}
+                      >
+                        {selectedMilestones.includes(m.id) && (
+                          <span style={{ color: 'var(--white)', fontSize: '12px', fontWeight: 800 }}>✓</span>
+                        )}
+                      </div>
+                      <span style={{ fontSize: '10px', color: 'var(--ink-4)', fontFamily: 'var(--font-d)', fontWeight: 700 }}>
+                        {selectedMilestones.includes(m.id) ? 'Selected' : 'Select'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Review area for SUBMITTED */}
+                {m.status === 'SUBMITTED' && (
+                  <div className="review-feedback-area">
+                    <div className="review-feedback-label">
+                      Feedback (optional for approval, required to reject)
+                    </div>
+                    <textarea
+                      className="dash-textarea"
+                      rows={3}
+                      placeholder="Explain what's good or what needs fixing…"
+                      value={rejectionReasons[m.id] || ''}
+                      onChange={(e) => handleReasonChange(m.id, e.target.value)}
                     />
-                    <div style={{ display: 'flex', gap: '10px' }}>
-                      <button
-                        onClick={() => handleApproveMilestone(milestone.id)}
-                        style={{
-                          backgroundColor: '#4CAF50',
-                          color: 'white',
-                          padding: '12px 20px',
-                          border: 'none',
-                          borderRadius: '8px',
-                          cursor: 'pointer',
-                          fontWeight: 'bold',
-                          flex: 1
-                        }}
-                      >
-                        APPROVE & PAY
+                    <div className="review-actions">
+                      <button className="btn-approve" onClick={() => handleApprove(m.id)}>
+                        🚀 Approve & Pay ${m.amount}
                       </button>
-                      <button
-                        onClick={() => handleRejectMilestone(milestone.id)}
-                        style={{
-                          backgroundColor: '#f44336',
-                          color: 'white',
-                          padding: '12px 20px',
-                          border: 'none',
-                          borderRadius: '8px',
-                          cursor: 'pointer',
-                          fontWeight: 'bold',
-                          flex: 1
-                        }}
-                      >
-                        REJECT WORK
+                      <button className="btn-reject" onClick={() => handleReject(m.id)}>
+                        ✕ Reject Work
                       </button>
                     </div>
                   </div>
                 )}
               </div>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
+        )}
 
-      {milestones.some(m => m.status === 'SUGGESTED') && (
-        <div style={{ marginTop: '20px', textAlign: 'right' }}>
-          <button
-            onClick={handleConfirmMilestones}
-            style={{ padding: '12px 24px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
-          >
-            Confirm & Fund Selected Milestonestf
-          </button>
-        </div>
-      )}
+        {/* Floating confirm bar at bottom */}
+        {hasSuggested && (
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '16px 20px',
+            background: 'var(--ink)',
+            border: '2px solid var(--border)',
+            borderRadius: 'var(--r-lg)',
+            boxShadow: 'var(--shadow-brut-lg)',
+          }}>
+            <span style={{
+              fontFamily: 'var(--font-d)', fontSize: '13px', fontWeight: 700,
+              color: 'rgba(255,255,255,0.6)',
+            }}>
+              {selectedMilestones.length} milestone{selectedMilestones.length !== 1 ? 's' : ''} selected
+            </span>
+            <button className="btn-approve" style={{ flex: 'none' }} onClick={handleConfirm}>
+              ✓ Confirm & Fund Selected
+            </button>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 };
+

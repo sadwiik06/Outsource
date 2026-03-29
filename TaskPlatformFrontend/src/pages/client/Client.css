@@ -1,0 +1,322 @@
+/* ══════════════════════════════════════════════════
+   CLIENT.CSS — Client dashboard specific styles
+   Extends Dashboard.css
+   Theme: Light SaaS × Subtle Neo-Brutalism
+   ══════════════════════════════════════════════════ */
+
+/* ── REVIEW CARD (milestone awaiting review) ── */
+.review-card {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 22px;
+  box-shadow: var(--shadow-brut-md);
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--trans), box-shadow var(--trans);
+}
+.review-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 4px;
+  background: #f59e0b;
+}
+.review-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-brut-lg);
+}
+
+.review-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.review-card-title {
+  font-family: var(--font-d);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--ink);
+  margin-bottom: 5px;
+}
+
+.review-card-url {
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.review-card-url a {
+  color: var(--accent-2);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  word-break: break-all;
+  transition: color var(--trans);
+}
+.review-card-url a:hover { color: var(--ink); }
+
+/* Badge — awaiting review */
+.badge-review {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 11px;
+  border-radius: 100px;
+  font-family: var(--font-d);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  background: #fffbeb;
+  color: #b45309;
+  border: 1.5px solid #fde68a;
+  box-shadow: 2px 2px 0 #fde68a;
+  flex-shrink: 0;
+}
+
+/* Feedback textarea area */
+.review-feedback-area {
+  background: var(--paper);
+  border: 2px solid var(--border-light);
+  border-radius: var(--r);
+  padding: 16px;
+  margin-top: 4px;
+}
+.review-feedback-label {
+  font-family: var(--font-d);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-bottom: 8px;
+}
+.review-feedback-area .dash-textarea {
+  background: var(--white);
+  margin-bottom: 12px;
+}
+
+.review-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Approve button — green */
+.btn-approve {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 18px;
+  font-family: var(--font-d);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--accent-3);
+  border: 2px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-brut);
+  cursor: pointer;
+  transition: transform var(--trans), box-shadow var(--trans);
+  white-space: nowrap;
+}
+.btn-approve:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-brut-lg);
+}
+.btn-approve:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--border);
+}
+
+/* Reject button — red outline style */
+.btn-reject {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 18px;
+  font-family: var(--font-d);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--red);
+  background: var(--white);
+  border: 2px solid var(--red);
+  border-radius: var(--r);
+  box-shadow: 4px 4px 0 var(--red);
+  cursor: pointer;
+  transition: transform var(--trans), box-shadow var(--trans), background var(--trans), color var(--trans);
+  white-space: nowrap;
+}
+.btn-reject:hover {
+  background: var(--red);
+  color: var(--white);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--red);
+}
+.btn-reject:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--red);
+}
+
+/* ── OPEN TASK CARD ── */
+.open-task-card {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 20px 22px;
+  box-shadow: var(--shadow-brut-md);
+  transition: transform var(--trans), box-shadow var(--trans);
+}
+.open-task-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-brut-lg);
+}
+.open-task-card-title {
+  font-family: var(--font-d);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.3px;
+  margin-bottom: 6px;
+}
+.open-task-card-desc {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--ink-3);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── ASSIGN FREELANCER PANEL ── */
+.assign-panel {
+  background: var(--ink);
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 22px;
+  box-shadow: var(--shadow-brut-lg);
+  animation: slideInRight 0.25s ease both;
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.assign-panel-title {
+  font-family: var(--font-d);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -0.3px;
+  margin-bottom: 3px;
+}
+.assign-panel-sub {
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 16px;
+}
+
+.assign-panel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.assign-freelancer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: var(--r);
+  padding: 12px 14px;
+  transition: background var(--trans), border-color var(--trans);
+}
+.assign-freelancer-row:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.assign-freelancer-info { flex: 1; min-width: 0; }
+.assign-freelancer-email {
+  font-family: var(--font-d);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--white);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.assign-freelancer-level {
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 2px;
+}
+
+.btn-assign {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  font-family: var(--font-d);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--white);
+  border: 2px solid var(--white);
+  border-radius: 6px;
+  box-shadow: 2px 2px 0 rgba(255,255,255,0.3);
+  cursor: pointer;
+  transition: background var(--trans), transform var(--trans), box-shadow var(--trans);
+  flex-shrink: 0;
+}
+.btn-assign:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--white);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 rgba(249,115,22,0.4);
+}
+
+.assign-empty {
+  font-size: 13px;
+  color: rgba(255,255,255,0.3);
+  font-style: italic;
+  text-align: center;
+  padding: 16px 0;
+}
+
+/* ── ONGOING TASK SIDEBAR CARD ── */
+.ongoing-task-card {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-brut);
+  transition: transform var(--trans), box-shadow var(--trans);
+}
+.ongoing-task-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-brut-lg);
+}
+.ongoing-task-title {
+  font-family: var(--font-d);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 10px;
+}

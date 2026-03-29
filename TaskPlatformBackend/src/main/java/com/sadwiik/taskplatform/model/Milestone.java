@@ -24,7 +24,7 @@ public class Milestone {
     @JsonBackReference
     private Task task;
 
-    @Column(name = "freelancer_id", nullable = false)
+    @Column(name = "freelancer_id", nullable = true)
     private Long freelancerId;
 
     @Column(name = "client_id", nullable = false)
@@ -56,6 +56,7 @@ public class Milestone {
 
     // ---- Submission ----
     private String submissionUrl; // GitHub / Drive / Figma etc
+    private LocalDateTime dueDate; // Target deadline for this milestone
     private LocalDateTime submittedAt;
     private String rejectionReason; // Feedback from client
     private String approvalMessage; // Message left upon approval
@@ -66,7 +67,9 @@ public class Milestone {
 
     @PrePersist
     protected void onCreate() {
-        this.status = "CREATED";
+        if (this.status == null) {
+            this.status = "CREATED";
+        }
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -93,5 +96,13 @@ public class Milestone {
         if (this.task != null && this.task.getFreelancerId() != null) {
             this.freelancerId = this.task.getFreelancerId();
         }
+    }
+
+    /**
+     * Exposes the task title without serializing the whole nested Task object
+     */
+    @Transient
+    public String getTaskTitle() {
+        return this.task != null ? this.task.getTitle() : null;
     }
 }
