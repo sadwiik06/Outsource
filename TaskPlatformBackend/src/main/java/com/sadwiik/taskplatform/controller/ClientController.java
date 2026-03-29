@@ -77,6 +77,18 @@ public class ClientController {
         }
     }
 
+    @PostMapping("/rate-freelancer/{taskId}")
+    public ResponseEntity<String> rateFreelancer(@PathVariable Long taskId, @RequestBody java.util.Map<String, Object> request) {
+        try {
+            Integer rating = (Integer) request.get("rating");
+            String review = (String) request.get("review");
+            clientService.rateFreelancer(taskId, rating, review);
+            return ResponseEntity.ok("Freelancer rated successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @PostMapping("/fund-milestone/{milestoneId}")
     public ResponseEntity<String> fundMilestone(@PathVariable Long milestoneId) {
         try {
@@ -127,6 +139,16 @@ public class ClientController {
             return ResponseEntity.ok(milestones);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/freelancer-profile/{freelancerId}")
+    public ResponseEntity<?> getFreelancerPublicProfile(@PathVariable Long freelancerId) {
+        try {
+            java.util.Map<String, Object> response = clientService.getFreelancerPublicProfile(freelancerId);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

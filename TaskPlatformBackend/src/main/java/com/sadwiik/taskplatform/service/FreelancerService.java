@@ -86,8 +86,7 @@ public class FreelancerService {
     }
 
     public Performance getFreelancerPerformance(Long freelancerId) {
-        return performanceRepository.findByUserId(freelancerId)
-                .orElseGet(() -> performanceService.calculateFreelancerPerformance(freelancerId));
+        return performanceService.calculateFreelancerPerformance(freelancerId);
     }
 
     public Milestone getMilestone(Long milestoneId) {

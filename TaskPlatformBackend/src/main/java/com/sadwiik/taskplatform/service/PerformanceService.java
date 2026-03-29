@@ -29,7 +29,7 @@ public class PerformanceService {
         // --- Success Rate ---
         // Only consider finalized tasks (Completed, Cancelled, or Disputed)
         long finalizedTasks = freelancerTasks.stream()
-                .filter(t -> !"OPEN".equals(t.getStatus()) && !"IN_PROGRESS".equals(t.getStatus()))
+                .filter(t -> "COMPLETED".equals(t.getStatus()) || "CANCELLED".equals(t.getStatus()) || "DISPUTED".equals(t.getStatus()))
                 .count();
         long completedTasks = freelancerTasks.stream()
                 .filter(t -> "COMPLETED".equals(t.getStatus()))
@@ -39,23 +39,25 @@ public class PerformanceService {
         double completionRate = finalizedTasks > 0 ? (completedTasks / (double) finalizedTasks) * 100 : 100.0;
 
         // --- On-Time Delivery ---
-        // Only consider submitted milestones compared to their dueDates
+        // Consider milestones that are submitted or approved
         var freelancerMilestones = milestoneRepository.findByFreelancerId(freelancerId);
         long submittedMilestonesCount = freelancerMilestones.stream()
-                .filter(m -> m.getSubmittedAt() != null)
+                .filter(m -> m.getSubmittedAt() != null || "APPROVED".equals(m.getStatus()) || "PAID".equals(m.getStatus()))
                 .count();
+
         long onTimeMilestones = freelancerMilestones.stream()
-                .filter(m -> m.getSubmittedAt() != null && m.getDueDate() != null && 
-                            (m.getSubmittedAt().isBefore(m.getDueDate()) || m.getSubmittedAt().isEqual(m.getDueDate())))
-                .count();
-        
-        // If a milestone has no dueDate, we treat it as on-time for now if submitted
-        long submittedWithNoDueDate = freelancerMilestones.stream()
-                .filter(m -> m.getSubmittedAt() != null && m.getDueDate() == null)
+                .filter(m -> {
+                    boolean isSubmittedOrCompleted = m.getSubmittedAt() != null || "APPROVED".equals(m.getStatus()) || "PAID".equals(m.getStatus());
+                    if (!isSubmittedOrCompleted) return false;
+                    if (m.getDueDate() == null) return true; // Treat as on-time if no due date was set
+                    
+                    java.time.LocalDateTime completionDate = m.getSubmittedAt() != null ? m.getSubmittedAt() : m.getUpdatedAt();
+                    return completionDate != null && (completionDate.isBefore(m.getDueDate()) || completionDate.isEqual(m.getDueDate()));
+                })
                 .count();
 
         double onTimeRate = submittedMilestonesCount > 0 
-                ? ((onTimeMilestones + submittedWithNoDueDate) / (double) submittedMilestonesCount) * 100 
+                ? (onTimeMilestones / (double) submittedMilestonesCount) * 100 
                 : 100.0; // Assume on-time if nothing submitted yet
 
         double avgRating = freelancerTasks.stream()

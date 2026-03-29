@@ -11,6 +11,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findByFreelancerId(Long freelancerId);
 
-    @org.springframework.data.jpa.repository.Query("SELECT DISTINCT t.freelancerId FROM Task t WHERE t.freelancerId IS NOT NULL AND t.status NOT IN ('COMPLETED', 'CANCELLED')")
+    @org.springframework.data.jpa.repository.Query("SELECT t.freelancerId FROM Task t WHERE t.freelancerId IS NOT NULL AND t.status NOT IN ('COMPLETED', 'CANCELLED') GROUP BY t.freelancerId HAVING COUNT(t.id) >= 2")
     List<Long> findBusyFreelancerIds();
 }

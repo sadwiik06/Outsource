@@ -24,7 +24,7 @@ public class Milestone {
     @JsonBackReference
     private Task task;
 
-    @Column(name = "freelancer_id", nullable = false)
+    @Column(name = "freelancer_id", nullable = true)
     private Long freelancerId;
 
     @Column(name = "client_id", nullable = false)
@@ -67,7 +67,9 @@ public class Milestone {
 
     @PrePersist
     protected void onCreate() {
-        this.status = "CREATED";
+        if (this.status == null) {
+            this.status = "CREATED";
+        }
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }

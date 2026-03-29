@@ -257,7 +257,11 @@ export const ClientDashboard = () => {
                       freelancers.map(fl => (
                         <div key={fl.id} className="assign-freelancer-row">
                           <div className="assign-freelancer-info">
-                            <div className="assign-freelancer-email">{fl.email}</div>
+                            <div className="assign-freelancer-email">
+                              <Link to={`/freelancer-profile/${fl.id}`} target="_blank" style={{ color: 'var(--accent-2)', textDecoration: 'underline' }}>
+                                {fl.email}
+                              </Link>
+                            </div>
                             <div className="assign-freelancer-level">
                               Level: {fl.performance?.performanceLevel || 'N/A'}
                             </div>

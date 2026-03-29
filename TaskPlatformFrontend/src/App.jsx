@@ -18,6 +18,7 @@ import { CreateTaskPage } from './pages/client/CreateTaskPage';
 import { ClientTasksPage } from './pages/client/ClientTasksPage';
 import { ClientMilestonesPage } from './pages/client/ClientMilestonesPage';
 import { TaskMilestonesPage } from './pages/client/TaskMilestonesPage';
+import { PublicFreelancerProfile } from './pages/PublicFreelancerProfile';
 
 // Freelancer Pages
 import { FreelancerDashboard } from './pages/freelancer/FreelancerDashboard';
@@ -60,6 +61,18 @@ function App() {
                     <Route path="task/:taskId/milestones" element={<TaskMilestonesPage />} />
                     <Route path="milestones" element={<ClientMilestonesPage />} />
                   </Routes>
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Public Profile Route (authenticated but not restricted by role) */}
+          <Route
+            path="/freelancer-profile/:id"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <PublicFreelancerProfile />
                 </Layout>
               </ProtectedRoute>
             }

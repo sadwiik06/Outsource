@@ -32,4 +32,8 @@ export const clientTaskService = {
     api.get(`/tasks/client/${clientId}`),
   getFreelancersWithPerformance: () =>
     api.get('/client/freelancers'),
+  getFreelancerPublicProfile: (id) =>
+    api.get(`/client/freelancer-profile/${id}`),
+  rateFreelancer: (taskId, ratingData) =>
+    api.post(`/client/rate-freelancer/${taskId}`, ratingData),
 };

@@ -4,11 +4,13 @@ import com.sadwiik.taskplatform.model.*;
 import com.sadwiik.taskplatform.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional
 public class MilestoneService {
 
     @Autowired
@@ -25,9 +27,6 @@ public class MilestoneService {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
 
-        if (task.getFreelancerId() == null) {
-            throw new RuntimeException("Task must be assigned to a freelancer before suggesting milestones");
-        }
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime taskDeadline = task.getDeadline() != null ? task.getDeadline() : now.plusDays(14);
@@ -178,5 +177,13 @@ public class MilestoneService {
     }
     public void deleteownmilestone(Long milestoneId){
         milestoneRepository.deleteById(milestoneId);
+    }
+
+    public void assignFreelancerToMilestones(Long taskId, Long freelancerId) {
+        List<Milestone> milestones = milestoneRepository.findByTaskId(taskId);
+        for (Milestone m : milestones) {
+            m.setFreelancerId(freelancerId);
+        }
+        milestoneRepository.saveAll(milestones);
     }
 }
