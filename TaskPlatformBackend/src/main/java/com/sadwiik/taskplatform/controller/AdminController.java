@@ -20,7 +20,6 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
-    // ---- USER MANAGEMENT ----
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
         try {
@@ -62,7 +61,6 @@ public class AdminController {
         }
     }
 
-    // ---- TASK MANAGEMENT ----
     @GetMapping("/tasks")
     public ResponseEntity<List<Task>> getAllTasks() {
         try {
@@ -93,7 +91,6 @@ public class AdminController {
         }
     }
 
-    // ---- PAYMENT MANAGEMENT ----
     @GetMapping("/payments")
     public ResponseEntity<?> getAllPayments() {
         try {
@@ -132,7 +129,6 @@ public class AdminController {
         }
     }
 
-    // ---- PERFORMANCE ANALYTICS ----
     @GetMapping("/performance/all")
     public ResponseEntity<List<Performance>> getAllPerformance() {
         try {
@@ -163,7 +159,6 @@ public class AdminController {
         }
     }
 
-    // ---- SYSTEM ANALYTICS ----
     @GetMapping("/analytics/dashboard")
     public ResponseEntity<?> getDashboard() {
         try {
@@ -180,7 +175,6 @@ public class AdminController {
         }
     }
 
-    // ---- AUDIT LOGS ----
     @GetMapping("/audits")
     public ResponseEntity<List<AuditLog>> getAllAuditLogs() {
         try {

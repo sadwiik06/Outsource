@@ -56,7 +56,6 @@ export const PaymentManagementPage = () => {
           </div>
         </div>
 
-        {/* Filter bar */}
         <div style={{
           display: 'flex', gap: '12px', alignItems: 'flex-end',
           padding: '16px 20px', background: 'var(--white)',
@@ -120,7 +119,6 @@ export const PaymentManagementPage = () => {
           </div>
         )}
 
-        {/* Detail modal */}
         {selectedPayment && (
           <div className="modal-overlay" onClick={handleOverlayClick}>
             <div className="modal-content">

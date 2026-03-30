@@ -58,7 +58,6 @@ export const PerformanceAnalyticsPage = () => {
           </div>
         </div>
 
-        {/* Summary stat cards */}
         {!loading && !error && (
           <div className="stats-grid">
             <div className="stat-card">
@@ -76,7 +75,6 @@ export const PerformanceAnalyticsPage = () => {
           </div>
         )}
 
-        {/* Tab switcher */}
         <div style={{
           display: 'flex', gap: '0',
           border: '2px solid var(--border)', borderRadius: 'var(--r)',
@@ -110,7 +108,6 @@ export const PerformanceAnalyticsPage = () => {
           ))}
         </div>
 
-        {/* Table content */}
         {loading ? <div className="dash-loading">Loading performance data...</div>
           : error ? <div className="empty-state" style={{ color: 'var(--red)' }}>{error}</div>
           : (

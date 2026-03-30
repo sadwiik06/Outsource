@@ -24,7 +24,7 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private String role; // CLIENT / FREELANCER / ADMIN
+    private String role;
 
     @Column(nullable = false)
     private Double balance = 0.0;

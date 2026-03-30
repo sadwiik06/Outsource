@@ -54,7 +54,7 @@ export const TaskManagementPage = () => {
           </div>
         </div>
 
-        {/* Filter */}
+        
         <div style={{
           display: 'flex', gap: '12px', alignItems: 'flex-end',
           padding: '16px 20px', background: 'var(--white)',
@@ -115,7 +115,7 @@ export const TaskManagementPage = () => {
           </div>
         )}
 
-        {/* Detail modal */}
+        
         {selectedTask && (
           <div className="modal-overlay" onClick={handleOverlayClick}>
             <div className="modal-content">

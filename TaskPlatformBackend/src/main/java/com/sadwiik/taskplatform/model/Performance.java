@@ -18,23 +18,23 @@ public class Performance {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private Long userId; // References Client or Freelancer ID
+    private Long userId;
 
     @Column(nullable = false)
-    private Double completionRate; // Percentage
+    private Double completionRate;
 
-    private Double onTimeDeliveryRate; // Percentage, primarily for freelancers
-
-    @Column(nullable = false)
-    private Double avgRating; // Average client/freelancer rating
+    private Double onTimeDeliveryRate;
 
     @Column(nullable = false)
-    private Integer disputesCount; // Number of disputes
-
-    private Double earningsGrowth; // Percentage, primarily for freelancers
+    private Double avgRating;
 
     @Column(nullable = false)
-    private String performanceLevel; // e.g., GOLD, SILVER, BRONZE, RISK
+    private Integer disputesCount;
+
+    private Double earningsGrowth;
+
+    @Column(nullable = false)
+    private String performanceLevel;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

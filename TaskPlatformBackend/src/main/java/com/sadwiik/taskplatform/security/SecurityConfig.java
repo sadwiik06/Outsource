@@ -64,22 +64,17 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/api/auth/**").permitAll()
 
-                    // Task endpoints
                     .requestMatchers(HttpMethod.GET, "/api/tasks/**").hasAnyRole("CLIENT", "FREELANCER", "ADMIN")
                     .requestMatchers(HttpMethod.POST, "/api/tasks").hasRole("CLIENT")
                     .requestMatchers(HttpMethod.PUT, "/api/tasks/**").hasRole("CLIENT")
                     .requestMatchers(HttpMethod.DELETE, "/api/tasks/**").hasRole("CLIENT")
 
-                    // Milestone endpoints
                     .requestMatchers("/api/milestones/**").hasAnyRole("CLIENT", "FREELANCER", "ADMIN")
 
-                    // Payment endpoints
                     .requestMatchers("/api/payments/**").hasAnyRole("CLIENT", "ADMIN")
 
-                    // Performance endpoints
                     .requestMatchers("/api/performance/**").hasAnyRole("CLIENT", "FREELANCER", "ADMIN")
 
-                    // Role-based access
                     .requestMatchers("/api/client/**").hasRole("CLIENT")
                     .requestMatchers("/api/freelancer/**").hasRole("FREELANCER")
                     .requestMatchers("/api/admin/**").hasRole("ADMIN")

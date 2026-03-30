@@ -66,7 +66,7 @@ export const UserManagementPage = () => {
             <h2>User Management</h2>
             <p className="dashboard-header-text">View, activate, and suspend platform accounts.</p>
           </div>
-          {/* Stat chips */}
+         
           {!loading && (
             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
               {[
@@ -92,7 +92,7 @@ export const UserManagementPage = () => {
           )}
         </div>
 
-        {/* Search bar */}
+       
         <div style={{
           padding: '14px 18px',
           background: 'var(--white)', border: '2px solid var(--border)',
@@ -149,7 +149,7 @@ export const UserManagementPage = () => {
           </div>
         )}
 
-        {/* Detail modal */}
+        
         {selectedUser && (
           <div className="modal-overlay" onClick={handleOverlayClick}>
             <div className="modal-content">

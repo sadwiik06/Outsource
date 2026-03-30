@@ -36,12 +36,12 @@ export const PublicFreelancerProfile = () => {
     <div className="dashboard-wrapper">
       <div className="dashboard-container">
         
-        {/* Back */}
+        
         <button className="btn-secondary btn-sm" style={{ width: 'fit-content', marginBottom: '16px' }} onClick={() => navigate(-1)}>
           ← Back
         </button>
 
-        {/* Header */}
+        
         <div className="dashboard-header">
           <div className="dashboard-header-title">
             <h2>{profile.name || profile.email}</h2>

@@ -47,7 +47,6 @@ export const FreelancerProfilePage = () => {
     <div className="dashboard-wrapper">
       <div className="dashboard-container">
 
-        {/* Header */}
         <div className="dashboard-header">
           <div className="dashboard-header-title">
             <h2>My Profile</h2>

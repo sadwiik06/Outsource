@@ -41,7 +41,6 @@ public class FreelancerService {
     public Optional<User> getFreelancerProfile(Long freelancerId) {
         return userRepository.findById(freelancerId).map(user -> {
             
-            // Retroactive self-healing: automatically complete tasks if all milestones are done
             taskRepository.findByFreelancerId(freelancerId).stream()
                 .filter(t -> !"COMPLETED".equals(t.getStatus()))
                 .forEach(t -> {

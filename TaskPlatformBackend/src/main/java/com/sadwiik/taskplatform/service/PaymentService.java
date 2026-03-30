@@ -32,12 +32,6 @@ public class PaymentService {
                 
 
                 
-                if (client.getBalance() < milestone.getAmount()) {
-                throw new RuntimeException("Insufficient balance to fund milestone: " +
-                milestone.getId());
-                }
-                
-                // Deduct from client
                 client.setBalance(client.getBalance() - milestone.getAmount());
                 userRepository.save(client);
                 
@@ -58,7 +52,6 @@ public class PaymentService {
                 Milestone milestone = milestoneRepository.findById(milestoneId)
                                 .orElseThrow(() -> new RuntimeException("Milestone not found"));
 
-                // Only release payment if milestone is APPROVED
                 if (!"APPROVED".equals(milestone.getStatus())) {
                         throw new RuntimeException(
                                         "Cannot release payment: Milestone must be APPROVED. Current status: "
@@ -70,7 +63,6 @@ public class PaymentService {
                                 .stream()
                                 .findFirst()
                                 .orElseGet(() -> {
-                                        // 🚀 Auto-fund if skipped by client
                                         holdFundsForMilestone(milestoneId);
                                         return paymentRepository.findByMilestoneId(milestoneId).get(0);
                                 });
@@ -79,7 +71,6 @@ public class PaymentService {
                         throw new RuntimeException("Payment already released for milestone: " + milestoneId);
                 }
 
-                // Move money to freelancer
                 
                 User freelancer = userRepository.findById(tx.getPayeeId())
                 .orElseThrow(() -> new RuntimeException("Freelancer not found"));
@@ -90,7 +81,6 @@ public class PaymentService {
                 userRepository.save(freelancer);
                 
 
-                // Update transaction and milestone status
                 tx.setStatus("RELEASED");
                 paymentRepository.save(tx);
 
@@ -109,7 +99,6 @@ public class PaymentService {
                                 .findFirst()
                                 .orElseThrow(() -> new RuntimeException("Payment not found"));
 
-                // Only refund if payment hasn't been released yet
                 if ("RELEASED".equals(tx.getStatus())) {
                         throw new RuntimeException("Cannot refund: Payment has already been released");
                 }

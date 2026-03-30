@@ -23,7 +23,6 @@ public class AuthService {
     @Autowired
     private JwtUtils jwtUtils;
 
-    // REGISTER USER
     public String register(String email, String password, String role) {
         if (userRepository.existsByEmail(email)) {
             throw new RuntimeException("Email already in use");
@@ -33,12 +32,11 @@ public class AuthService {
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
         user.setRole(role.toUpperCase());
-        user.setRole(role.toUpperCase());
+        
         userRepository.save(user);
         return "User registered successfully";
     }
 
-    // LOGIN USER
     public Map<String, Object> login(String email, String password) {
         Optional<User> userOpt = userRepository.findByEmail(email);
         if (userOpt.isEmpty()) {

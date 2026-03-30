@@ -59,7 +59,6 @@ export const FreelancerDashboard = () => {
     <div className="dashboard-wrapper">
       <div className="dashboard-container">
 
-        {/* ── HEADER ── */}
         <div className="dashboard-header">
           <div className="dashboard-header-title">
             <h2>Freelancer Dashboard</h2>
@@ -72,7 +71,6 @@ export const FreelancerDashboard = () => {
           </div>
         </div>
 
-        {/* ── STATS ── */}
         {stats && (
           <div className="stats-grid">
             <div className="stat-card">
@@ -99,7 +97,6 @@ export const FreelancerDashboard = () => {
         ) : (
           <div className="dashboard-grid dashboard-grid-sidebar">
 
-            {/* ── MAIN: ACTION REQUIRED ── */}
             <div className="dashboard-main-content dashboard-section">
               <section>
                 <div className="alert-header">
@@ -159,7 +156,6 @@ export const FreelancerDashboard = () => {
               </section>
             </div>
 
-            {/* ── SIDEBAR: ONGOING TASKS ── */}
             <div className="dashboard-section">
               <section>
                 <div className="freelancer-section-header">
@@ -188,7 +184,6 @@ export const FreelancerDashboard = () => {
                 )}
               </section>
 
-              {/* Balance callout */}
               {user?.balance !== undefined && (
                 <div className="freelancer-info-card">
                   <div className="freelancer-info-card-label">Wallet Balance</div>

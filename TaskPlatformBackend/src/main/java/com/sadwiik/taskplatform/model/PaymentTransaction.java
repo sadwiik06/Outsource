@@ -20,19 +20,12 @@ public class PaymentTransaction {
     private Long taskId;
     private Long milestoneId;
 
-    private Long payerId;     // client
-    private Long payeeId;     // freelancer
+    private Long payerId;
+    private Long payeeId;
 
     private Double amount;
 
     private String status;
-    /*
-        HELD
-        RELEASED
-        REFUNDED
-        DISPUTED
-    */
-
     private LocalDateTime createdAt;
 
     @PrePersist

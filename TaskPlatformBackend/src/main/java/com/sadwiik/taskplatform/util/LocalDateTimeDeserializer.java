@@ -27,21 +27,18 @@ public class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
             return null;
         }
 
-        value = value.trim(); // Trim whitespace
+        value = value.trim(); 
 
-        // Check if value contains 'T' (datetime format indicator)
         if (value.contains("T")) {
             try {
                 return LocalDateTime.parse(value, DATETIME_FORMATTER);
             } catch (Exception e) {
-                // Fall through to date parsing
             }
         }
 
-        // Try to parse as date-only format (YYYY-MM-DD)
         try {
             LocalDate date = LocalDate.parse(value, DATE_FORMATTER);
-            return LocalDateTime.of(date, LocalTime.of(23, 59, 59)); // End of day
+            return LocalDateTime.of(date, LocalTime.of(23, 59, 59)); 
         } catch (Exception e) {
             throw new IOException("Could not parse date/datetime value '" + value + "'. Expected format: yyyy-MM-dd or yyyy-MM-dd'T'HH:mm:ss");
         }
