@@ -36,14 +36,14 @@ export const RegisterPage = () => {
         <div className="auth-panel-inner">
           <a href="/" className="auth-logo">
             <span className="auth-logo-mark">⬡</span>
-            TaskPlatform
+            OutSource
           </a>
           <div className="auth-panel-body">
             <div className="auth-tag">Get Started Free</div>
             <h1 className="auth-panel-h">Join thousands<br /><em>shipping faster.</em></h1>
             <p className="auth-panel-p">
               Whether you're a client looking for talent or a freelancer
-              ready to build — TaskPlatform has your workflow covered.
+              ready to build — OutSource has your workflow covered.
             </p>
 
             {/* Role explainer */}

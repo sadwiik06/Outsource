@@ -41,7 +41,7 @@ export const LoginPage = () => {
         <div className="auth-panel-inner">
           <a href="/" className="auth-logo">
             <span className="auth-logo-mark">⬡</span>
-            TaskPlatform
+            OutSource
           </a>
           <div className="auth-panel-body">
             <div className="auth-tag">Secure Login</div>
