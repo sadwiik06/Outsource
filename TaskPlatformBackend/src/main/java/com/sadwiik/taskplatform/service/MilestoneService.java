@@ -81,7 +81,6 @@ public class MilestoneService {
             throw new RuntimeException("No milestones found with provided IDs");
         }
 
-        // Validate all milestones belong to the task and have correct clientId
         for (Milestone milestone : milestones) {
             if (!milestone.getTask().getId().equals(taskId)) {
                 throw new RuntimeException("Milestone " + milestone.getId() + " does not belong to task " + taskId);
@@ -123,13 +122,10 @@ public class MilestoneService {
         milestone.setApprovalMessage(message);
         milestoneRepository.saveAndFlush(milestone);
 
-        // Auto-complete task if all milestones are done
         checkAndCompleteTask(milestone.getTask());
 
-        // Update performance metrics
         performanceService.updateScoreAfterApproval(milestoneId);
 
-        // Automate payment release
         paymentService.releaseMilestonePayment(milestoneId);
     }
     

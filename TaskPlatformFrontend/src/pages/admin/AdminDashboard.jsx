@@ -40,7 +40,6 @@ export const AdminDashboard = () => {
     <div className="dashboard-wrapper">
       <div className="dashboard-container">
 
-        {/* ── HEADER ── */}
         <div className="dashboard-header">
           <div className="dashboard-header-title">
             <h2>Admin Dashboard</h2>
@@ -50,7 +49,6 @@ export const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* ── SYSTEM METRICS ── */}
         {dashboard && (
           <section>
             <div className="section-title">System Metrics</div>
@@ -91,7 +89,6 @@ export const AdminDashboard = () => {
 
         <hr className="admin-section-divider" />
 
-        {/* ── QUICK ACCESS ── */}
         <section>
           <div className="section-title">Quick Access</div>
           <div className="admin-nav-grid">

@@ -1,10 +1,3 @@
-/* ══════════════════════════════════════════════════
-   ADMIN.CSS — Admin dashboard specific styles
-   Extends Dashboard.css
-   Theme: Light SaaS × Subtle Neo-Brutalism
-   ══════════════════════════════════════════════════ */
-
-/* ── QUICK ACCESS NAV GRID ── */
 .admin-nav-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -64,14 +57,13 @@
   line-height: 1;
 }
 
-/* ── SECTION DIVIDER ── */
 .admin-section-divider {
   border: none;
   border-top: 2px dashed var(--border-light);
   margin: 0;
 }
 
-/* ── USER MANAGEMENT TABLE EXTRAS ── */
+
 .admin-user-actions {
   display: flex;
   gap: 8px;
@@ -125,7 +117,7 @@
   box-shadow: 3px 3px 0 var(--border);
 }
 
-/* ── ADMIN DETAIL CARDS ── */
+
 .admin-detail-card {
   background: var(--white);
   border: 2px solid var(--border);
@@ -146,7 +138,7 @@
   );
 }
 
-/* ── AUDIT LOG ROWS ── */
+
 .audit-row {
   display: flex;
   align-items: flex-start;
@@ -192,7 +184,7 @@
   white-space: nowrap;
 }
 
-/* ── PERFORMANCE LEVEL BADGE ── */
+
 .perf-badge {
   display: inline-flex;
   align-items: center;
@@ -210,7 +202,7 @@
 .perf-low      { background: #fff1f2; color: #be123c; border-color: #fecdd3; box-shadow: 2px 2px 0 #fecdd3; }
 .perf-default  { background: var(--paper); color: var(--ink-2); border-color: var(--border-light); }
 
-/* ── PAYMENT AMOUNT CELL ── */
+
 .payment-amount {
   font-family: var(--font-d);
   font-size: 14px;
@@ -219,7 +211,7 @@
   color: var(--accent-3);
 }
 
-/* ── ADMIN ROLE TAG ── */
+
 .role-tag {
   display: inline-flex;
   align-items: center;

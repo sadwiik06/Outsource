@@ -12,5 +12,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConfirmMilestonesRequest {
-    private List<Long> milestoneIds;  // IDs of milestones to confirm
+    private List<Long> milestoneIds;
 }

@@ -5,14 +5,14 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { Layout } from './components/Layout';
 import './App.css';
 
-// Pages
+
 import HomePage from './pages/HomePage';
 
-// Auth Pages
+
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
 
-// Client Pages
+
 import { ClientDashboard } from './pages/client/ClientDashboard';
 import { CreateTaskPage } from './pages/client/CreateTaskPage';
 import { ClientTasksPage } from './pages/client/ClientTasksPage';
@@ -20,7 +20,7 @@ import { ClientMilestonesPage } from './pages/client/ClientMilestonesPage';
 import { TaskMilestonesPage } from './pages/client/TaskMilestonesPage';
 import { PublicFreelancerProfile } from './pages/PublicFreelancerProfile';
 
-// Freelancer Pages
+
 import { FreelancerDashboard } from './pages/freelancer/FreelancerDashboard';
 import { FreelancerProfilePage } from './pages/freelancer/FreelancerProfilePage';
 import { FreelancerTasksPage } from './pages/freelancer/FreelancerTasksPage';
@@ -28,7 +28,6 @@ import { FreelancerMilestonesPage } from './pages/freelancer/FreelancerMilestone
 import { FreelancerPerformancePage } from './pages/freelancer/FreelancerPerformancePage';
 import { FreelancerSubmitPage } from './pages/freelancer/FreelancerSubmitPage';
 
-// Admin Pages
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { UserManagementPage } from './pages/admin/UserManagementPage';
 import { TaskManagementPage } from './pages/admin/TaskManagementPage';
@@ -41,14 +40,14 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          {/* Home */}
+          
           <Route path="/" element={<HomePage />} />
 
-          {/* Auth Routes */}
+          
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
-          {/* Client Routes */}
+          
           <Route
             path="/client/*"
             element={
@@ -66,7 +65,7 @@ function App() {
             }
           />
 
-          {/* Public Profile Route (authenticated but not restricted by role) */}
+          
           <Route
             path="/freelancer-profile/:id"
             element={
@@ -78,7 +77,7 @@ function App() {
             }
           />
 
-          {/* Freelancer Routes */}
+          
           <Route
             path="/freelancer/*"
             element={
@@ -97,7 +96,7 @@ function App() {
             }
           />
 
-          {/* Admin Routes */}
+          
           <Route
             path="/admin/*"
             element={
@@ -116,7 +115,7 @@ function App() {
             }
           />
 
-          {/* Default Route */}
+          
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Router>

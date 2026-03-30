@@ -49,7 +49,6 @@ export const AuditLogsPage = () => {
           </div>
         </div>
 
-        {/* Filter bar */}
         <div style={{
           display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-end',
           padding: '16px 20px',

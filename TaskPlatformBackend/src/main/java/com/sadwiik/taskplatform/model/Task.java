@@ -21,13 +21,11 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // ---- Ownership ----
     @Column(nullable = false)
     private Long clientId;
 
-    private Long freelancerId; // null until assigned
+    private Long freelancerId;
 
-    // ---- Task Details ----
     @Column(nullable = false)
     private String title;
 
@@ -38,9 +36,9 @@ public class Task {
     private List<String> skills;
 
     @Column(nullable = false)
-    private String category; // e.g. Web, AI, Design, Backend
+    private String category;
 
-    private String difficulty; // EASY / MEDIUM / HARD (AI can infer)
+    private String difficulty;
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
@@ -52,26 +50,15 @@ public class Task {
 
     private Double escrowAmount = 0.0;
 
-    // ---- Status ----
     @Column(nullable = false)
     private String status;
-    /*
-        OPEN
-        IN_PROGRESS
-        COMPLETED
-        DISPUTED
-        CANCELLED
-    */
 
-    // ---- Milestones ----
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Milestone> milestones;
-
-    // ---- Ratings ----
-    private Integer clientRating; // given by client to freelancer
+    
+    private Integer clientRating;
     private String clientReview;
 
-    // ---- Audit ----
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

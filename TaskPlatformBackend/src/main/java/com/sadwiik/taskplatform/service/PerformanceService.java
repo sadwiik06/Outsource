@@ -26,8 +26,6 @@ public class PerformanceService {
 
         var freelancerTasks = taskRepository.findByFreelancerId(freelancerId);
         
-        // --- Success Rate ---
-        // Only consider finalized tasks (Completed, Cancelled, or Disputed)
         long finalizedTasks = freelancerTasks.stream()
                 .filter(t -> "COMPLETED".equals(t.getStatus()) || "CANCELLED".equals(t.getStatus()) || "DISPUTED".equals(t.getStatus()))
                 .count();
@@ -35,11 +33,8 @@ public class PerformanceService {
                 .filter(t -> "COMPLETED".equals(t.getStatus()))
                 .count();
 
-        // If a user has no finalized tasks, success rate is 100% (innocent until proven guilty)
         double completionRate = finalizedTasks > 0 ? (completedTasks / (double) finalizedTasks) * 100 : 100.0;
 
-        // --- On-Time Delivery ---
-        // Consider milestones that are submitted or approved
         var freelancerMilestones = milestoneRepository.findByFreelancerId(freelancerId);
         long submittedMilestonesCount = freelancerMilestones.stream()
                 .filter(m -> m.getSubmittedAt() != null || "APPROVED".equals(m.getStatus()) || "PAID".equals(m.getStatus()))
@@ -49,7 +44,7 @@ public class PerformanceService {
                 .filter(m -> {
                     boolean isSubmittedOrCompleted = m.getSubmittedAt() != null || "APPROVED".equals(m.getStatus()) || "PAID".equals(m.getStatus());
                     if (!isSubmittedOrCompleted) return false;
-                    if (m.getDueDate() == null) return true; // Treat as on-time if no due date was set
+                    if (m.getDueDate() == null) return true; 
                     
                     java.time.LocalDateTime completionDate = m.getSubmittedAt() != null ? m.getSubmittedAt() : m.getUpdatedAt();
                     return completionDate != null && (completionDate.isBefore(m.getDueDate()) || completionDate.isEqual(m.getDueDate()));
@@ -58,7 +53,7 @@ public class PerformanceService {
 
         double onTimeRate = submittedMilestonesCount > 0 
                 ? (onTimeMilestones / (double) submittedMilestonesCount) * 100 
-                : 100.0; // Assume on-time if nothing submitted yet
+                : 100.0; 
 
         double avgRating = freelancerTasks.stream()
                 .filter(t -> t.getClientRating() != null)
@@ -97,7 +92,7 @@ public class PerformanceService {
 
         double completionRate = totalTasks > 0 ? (completedTasks / (double) totalTasks) * 100 : 0;
 
-        double avgRating = 4.2; // Could calculate from freelancer ratings if available
+        double avgRating = 4.2; 
 
         int disputes = (int) clientTasks.stream()
                 .filter(t -> "DISPUTED".equals(t.getStatus()))
@@ -144,10 +139,8 @@ public class PerformanceService {
         Long freelancerId = milestone.getFreelancerId();
         Long clientId = task.getClientId();
 
-        // Update freelancer performance
         calculateFreelancerPerformance(freelancerId);
 
-        // Update client performance
         calculateClientPerformance(clientId);
     }
 
@@ -159,18 +152,15 @@ public class PerformanceService {
         Long freelancerId = milestone.getFreelancerId();
         Long clientId = task.getClientId();
 
-        // Update freelancer performance (rejections negatively impact score)
         Performance freelancerPerf = performanceRepository.findByUserId(freelancerId)
                 .orElse(new Performance());
         freelancerPerf.setDisputesCount(freelancerPerf.getDisputesCount() + 1);
         performanceRepository.save(freelancerPerf);
 
-        // Update client performance
         calculateClientPerformance(clientId);
     }
 
     private double calculateEarningsGrowth(Long freelancerId) {
-        // Calculate earnings growth percentage over time (placeholder)
         return 15.0;
     }
 }

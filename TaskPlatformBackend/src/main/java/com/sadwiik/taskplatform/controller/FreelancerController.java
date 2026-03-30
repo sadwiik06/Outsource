@@ -30,7 +30,6 @@ public class FreelancerController {
                 Performance perf = freelancerService.getFreelancerPerformance(freelancerId);
                 rating = perf.getAvgRating();
             } catch (Exception e) {
-                // Ignore if performance doesn't exist yet
             }
             
             java.util.Map<String, Object> response = new java.util.HashMap<>();

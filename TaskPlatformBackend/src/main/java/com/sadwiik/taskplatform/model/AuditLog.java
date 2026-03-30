@@ -21,15 +21,15 @@ public class AuditLog {
     private Long userId;
 
     @Column(nullable = false)
-    private String action; // e.g., CREATE_TASK, ASSIGN_FREELANCER, APPROVE_MILESTONE
+    private String action;
 
     @Column(nullable = false)
-    private String entityType; // TASK, MILESTONE, PAYMENT, USER
+    private String entityType;
 
-    private Long entityId; // Reference to the affected entity
+    private Long entityId;
 
     @Column(length = 1000)
-    private String details; // Additional context
+    private String details;
 
     @Column(nullable = false)
     private LocalDateTime timestamp;

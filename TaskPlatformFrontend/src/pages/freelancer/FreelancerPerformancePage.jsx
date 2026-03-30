@@ -42,7 +42,6 @@ export const FreelancerPerformancePage = () => {
     <div className="dashboard-wrapper">
       <div className="dashboard-container">
 
-        {/* Header */}
         <div className="dashboard-header">
           <div className="dashboard-header-title">
             <h2>My Performance</h2>
@@ -52,7 +51,6 @@ export const FreelancerPerformancePage = () => {
 
         {performance ? (
           <>
-            {/* Top stat row — big numbers */}
             <div className="stats-grid">
               <div className="stat-card">
                 <div className="stat-card-title">Completed Tasks</div>
@@ -70,7 +68,6 @@ export const FreelancerPerformancePage = () => {
               </div>
             </div>
 
-            {/* Secondary metrics */}
             <div className="freelancer-grid">
               <div className="freelancer-info-card">
                 <div className="freelancer-info-card-label">Average Rating</div>

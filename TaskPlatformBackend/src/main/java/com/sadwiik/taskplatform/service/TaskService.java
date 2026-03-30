@@ -26,7 +26,7 @@ public class TaskService {
     }
 
     public Task createTask(Task task) {
-        task.setStatus("OPEN"); // Ensure new tasks are always OPEN
+        task.setStatus("OPEN"); 
         return taskRepository.save(task);
     }
 
@@ -34,7 +34,6 @@ public class TaskService {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
 
-        // Update the task fields
         task.setTitle(taskDetails.getTitle());
         task.setDescription(taskDetails.getDescription());
         task.setSkills(taskDetails.getSkills());
@@ -44,9 +43,6 @@ public class TaskService {
         task.setTotalBudget(taskDetails.getTotalBudget());
         task.setStatus(taskDetails.getStatus());
 
-        // Milestones would need more complex logic for updates, additions, and removals
-        // For simplicity, we are not handling milestone updates here in this example
-
         return taskRepository.save(task);
     }
 
@@ -54,14 +50,10 @@ public class TaskService {
         taskRepository.deleteById(id);
     }
 
-    // ---- More complex business logic would go here ----
-
-    // Example: Assign a freelancer to a task
     public Task assignFreelancer(Long taskId, Long freelancerId) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
         
-        // In a real app, you would also check if the freelancer exists and is available
         task.setFreelancerId(freelancerId);
         task.setStatus("IN_PROGRESS");
         

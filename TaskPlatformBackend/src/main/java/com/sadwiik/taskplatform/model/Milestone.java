@@ -18,7 +18,6 @@ public class Milestone {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // ---- Relations ----
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_id", nullable = false)
     @JsonBackReference
@@ -39,29 +38,17 @@ public class Milestone {
     @Column(nullable = false)
     private Double amount;
 
-    private Integer sequenceOrder; // 1,2,3... (AI generated)
+    private Integer sequenceOrder;
 
-    // ---- Status ----
     @Column(nullable = false)
     private String status;
-    /*
-     * CREATED
-     * FUNDED
-     * SUBMITTED
-     * APPROVED
-     * REJECTED
-     * DISPUTED
-     * PAID
-     */
 
-    // ---- Submission ----
-    private String submissionUrl; // GitHub / Drive / Figma etc
-    private LocalDateTime dueDate; // Target deadline for this milestone
+    private String submissionUrl;
+    private LocalDateTime dueDate;
     private LocalDateTime submittedAt;
-    private String rejectionReason; // Feedback from client
-    private String approvalMessage; // Message left upon approval
+    private String rejectionReason;
+    private String approvalMessage;
 
-    // ---- Audit ----
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -79,28 +66,18 @@ public class Milestone {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // ---- Helper Methods ----
-    /**
-     * Ensures clientId is synchronized with the Task relationship
-     */
     public void syncClientIdFromTask() {
         if (this.task != null && this.task.getClientId() != null) {
             this.clientId = this.task.getClientId();
         }
     }
 
-    /**
-     * Ensures freelancerId is synchronized with the Task relationship
-     */
     public void syncFreelancerIdFromTask() {
         if (this.task != null && this.task.getFreelancerId() != null) {
             this.freelancerId = this.task.getFreelancerId();
         }
     }
 
-    /**
-     * Exposes the task title without serializing the whole nested Task object
-     */
     @Transient
     public String getTaskTitle() {
         return this.task != null ? this.task.getTitle() : null;

@@ -83,7 +83,6 @@ export default function HomePage() {
   return (
     <div className="hp-root">
 
-      {/* NAV */}
       <nav className={`hp-nav ${scrolled ? "hp-nav--stuck" : ""}`}>
         <div className="hp-nav-inner">
           <a href="#" className="hp-logo">
@@ -100,9 +99,7 @@ export default function HomePage() {
         </div>
       </nav>
 
-      {/* HERO */}
       <section className={`hp-hero ${heroInView ? "is-visible" : ""}`} ref={heroRef}>
-        {/* Background dots */}
         <div className="hp-hero-dots" />
 
         <div className="hp-hero-inner">
@@ -185,7 +182,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* STATS */}
       <section className="hp-stats">
         <div className="hp-stats-row">
           {STATS.map(s => (
@@ -197,7 +193,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* FEATURES */}
       <section className={`hp-features ${featInView ? "is-visible" : ""}`} ref={featRef}>
         <div className="hp-wrap">
           <div className="hp-sect-head">
@@ -220,7 +215,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
       <section className={`hp-steps ${stepsInView ? "is-visible" : ""}`} ref={stepsRef}>
         <div className="hp-wrap">
           <div className="hp-tag hp-tag-inv">How It Works</div>
@@ -237,7 +231,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ROLES */}
       <section className="hp-roles">
         <div className="hp-wrap">
           <div className="hp-tag">Built for Everyone</div>
@@ -261,7 +254,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
       <section className="hp-testi">
         <div className="hp-wrap">
           <div className="hp-tag">What People Say</div>
@@ -289,7 +281,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA */}
       <section className="hp-cta">
         <div className="hp-cta-box">
           <div className="hp-cta-stripe" />
@@ -304,7 +295,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer className="hp-footer">
         <div className="hp-footer-top">
           <div className="hp-footer-brand">

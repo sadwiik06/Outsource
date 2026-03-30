@@ -1,12 +1,8 @@
-/* ══════════════════════════════════════════════════
-   DASHBOARD.CSS — Shared styles for all dashboards
-   Theme: Light SaaS × Subtle Neo-Brutalism
-   Fonts: Syne (display) + Epilogue (body)
-   ══════════════════════════════════════════════════ */
+
 
 @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@400;500;600;700;800&family=Epilogue:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
 
-/* ── TOKENS ── */
+
 :root {
   --white:          #ffffff;
   --off:            #fafaf8;
@@ -35,9 +31,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 a { text-decoration: none; color: inherit; }
 
-/* ══════════════════════════════════════════════════
-   WRAPPER & CONTAINER
-   ══════════════════════════════════════════════════ */
+
 .dashboard-wrapper {
   background: var(--off);
   min-height: calc(100vh - 64px);
@@ -59,14 +53,12 @@ a { text-decoration: none; color: inherit; }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ══════════════════════════════════════════════════
-   HEADER
-   ══════════════════════════════════════════════════ */
+
 .dashboard-header {
     display: flex;
-    flex-direction: column; /* Stack title and text vertically */
-    align-items: center;    /* Center them horizontally */
-    text-align: center;     /* Center the text lines themselves */
+    flex-direction: column; 
+    align-items: center;    
+    text-align: center;     
     padding-bottom: 24px;
     border-bottom: 2px solid var(--border);
 }
@@ -95,9 +87,7 @@ a { text-decoration: none; color: inherit; }
   flex-shrink: 0;
 }
 
-/* ══════════════════════════════════════════════════
-   BUTTONS
-   ══════════════════════════════════════════════════ */
+
 .btn-primary,
 .btn-premium {
   display: inline-flex;
@@ -207,9 +197,7 @@ a { text-decoration: none; color: inherit; }
 .btn-lg  { padding: 12px 24px; font-size: 15px; }
 .btn-full { width: 100%; }
 
-/* ══════════════════════════════════════════════════
-   STATS GRID
-   ══════════════════════════════════════════════════ */
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
@@ -261,9 +249,7 @@ a { text-decoration: none; color: inherit; }
   line-height: 1;
 }
 
-/* ══════════════════════════════════════════════════
-   GRID LAYOUTS
-   ══════════════════════════════════════════════════ */
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -284,9 +270,7 @@ a { text-decoration: none; color: inherit; }
 
 .dashboard-main-content { min-width: 0; }
 
-/* ══════════════════════════════════════════════════
-   SECTION CHROME
-   ══════════════════════════════════════════════════ */
+
 .alert-header {
   display: flex;
   align-items: center;
@@ -311,9 +295,7 @@ a { text-decoration: none; color: inherit; }
   margin-bottom: 14px;
 }
 
-/* ══════════════════════════════════════════════════
-   CARDS
-   ══════════════════════════════════════════════════ */
+
 .card {
   background: var(--white);
   border: 2px solid var(--border);
@@ -387,9 +369,6 @@ a { text-decoration: none; color: inherit; }
   gap: 10px;
 }
 
-/* ══════════════════════════════════════════════════
-   EMPTY STATE
-   ══════════════════════════════════════════════════ */
 .empty-state {
   text-align: center;
   padding: 44px 24px;
@@ -400,9 +379,7 @@ a { text-decoration: none; color: inherit; }
   color: var(--ink-3);
 }
 
-/* ══════════════════════════════════════════════════
-   STATUS BADGES
-   ══════════════════════════════════════════════════ */
+
 .freelancer-status-badge,
 .status-badge {
   display: inline-flex;
@@ -427,9 +404,7 @@ a { text-decoration: none; color: inherit; }
 .status-pending    { background: #fffbeb; color: #b45309; border-color: #fde68a; box-shadow: 2px 2px 0 #fde68a; }
 .status-suspended  { background: #fff1f2; color: #be123c; border-color: #fecdd3; box-shadow: 2px 2px 0 #fecdd3; }
 
-/* ══════════════════════════════════════════════════
-   ALERT BANNERS
-   ══════════════════════════════════════════════════ */
+
 .freelancer-feedback-alert {
   display: flex;
   flex-direction: column;
@@ -456,9 +431,7 @@ a { text-decoration: none; color: inherit; }
   line-height: 1.5;
 }
 
-/* ══════════════════════════════════════════════════
-   TABLES
-   ══════════════════════════════════════════════════ */
+
 .table-container {
   background: var(--white);
   border: 2px solid var(--border);
@@ -494,9 +467,7 @@ a { text-decoration: none; color: inherit; }
 .dash-table tbody tr { transition: background var(--trans); }
 .dash-table tbody tr:hover { background: var(--paper); }
 
-/* ══════════════════════════════════════════════════
-   MODALS
-   ══════════════════════════════════════════════════ */
+
 .modal-overlay,
 .freelancer-modal-overlay {
   position: fixed;
@@ -567,9 +538,7 @@ a { text-decoration: none; color: inherit; }
   display: flex; gap: 10px; justify-content: flex-end;
 }
 
-/* ══════════════════════════════════════════════════
-   FORM INPUTS
-   ══════════════════════════════════════════════════ */
+
 .dash-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
 .dash-label {
   font-family: var(--font-d);
@@ -602,9 +571,7 @@ a { text-decoration: none; color: inherit; }
 }
 .dash-textarea { resize: vertical; min-height: 88px; }
 
-/* ══════════════════════════════════════════════════
-   LOADING
-   ══════════════════════════════════════════════════ */
+
 .dash-loading {
   text-align: center;
   padding: 60px 24px;
@@ -615,9 +582,7 @@ a { text-decoration: none; color: inherit; }
   letter-spacing: 0.5px;
 }
 
-/* ══════════════════════════════════════════════════
-   RESPONSIVE
-   ══════════════════════════════════════════════════ */
+
 @media (max-width: 768px) {
   .dashboard-container { padding: 0 16px; gap: 20px; }
   .dashboard-header { flex-direction: column; }

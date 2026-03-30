@@ -156,7 +156,6 @@ public class AdminService {
                 .count();
     }
 
-    // ---- AUDIT LOGS ----
     public List<AuditLog> getAllAuditLogs() {
         return auditLogRepository.findAll();
     }
