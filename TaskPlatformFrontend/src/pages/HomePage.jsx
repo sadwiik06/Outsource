@@ -27,7 +27,7 @@ const STEPS = [
 ];
 
 const TESTIMONIALS = [
-  { quote: "TaskPlatform changed how we ship. Every milestone is crystal clear, payments are instant.",        author: "Priya M.",  role: "Product Lead, Fintech Startup", av: "PM" },
+  { quote: "OutSource changed how we ship. Every milestone is crystal clear, payments are instant.",        author: "Priya M.",  role: "Product Lead, Fintech Startup", av: "PM" },
   { quote: "As a freelancer, I finally have clarity on what I'm building and exactly when I get paid.",        author: "Daniel O.", role: "Full-Stack Developer",           av: "DO" },
   { quote: "The admin panel gives me insight into every corner of the platform. Absolutely unmatched.",        author: "Sara K.",   role: "Platform Administrator",          av: "SK" },
 ];
@@ -88,7 +88,7 @@ export default function HomePage() {
         <div className="hp-nav-inner">
           <a href="#" className="hp-logo">
             <span className="hp-logo-mark">⬡</span>
-            TaskPlatform
+            OutSource
           </a>
           <div className="hp-nav-links">
             {NAV_LINKS.map(l => <a key={l} href="#" className="hp-nav-link">{l}</a>)}
@@ -118,7 +118,7 @@ export default function HomePage() {
             </h1>
 
             <p className="hp-hero-p">
-              TaskPlatform connects clients and freelancers through milestone-driven
+              OutSource connects clients and freelancers through milestone-driven
               contracts, transparent payments, and real-time oversight.
               No chaos. Just progress.
             </p>
@@ -296,7 +296,7 @@ export default function HomePage() {
           <h2 className="hp-cta-h">
             Ready to build<br /><em>without the friction?</em>
           </h2>
-          <p className="hp-cta-p">Join thousands of clients and freelancers already shipping on TaskPlatform.</p>
+          <p className="hp-cta-p">Join thousands of clients and freelancers already shipping on OutSource.</p>
           <div className="hp-cta-btns">
             <a href="#" className="hp-btn-solid hp-btn-lg">Create free account →</a>
             <a href="#" className="hp-btn-outline hp-btn-lg">Talk to sales</a>
@@ -310,7 +310,7 @@ export default function HomePage() {
           <div className="hp-footer-brand">
             <a href="#" className="hp-logo">
               <span className="hp-logo-mark">⬡</span>
-              TaskPlatform
+              OutSource
             </a>
             <p className="hp-footer-tag">Work, managed without the noise.</p>
           </div>
@@ -328,7 +328,7 @@ export default function HomePage() {
           </div>
         </div>
         <div className="hp-footer-bot">
-          <span>© 2025 TaskPlatform. All rights reserved.</span>
+          <span>© 2025 OutSource. All rights reserved.</span>
           <span>Built with precision.</span>
         </div>
       </footer>

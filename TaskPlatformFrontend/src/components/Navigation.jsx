@@ -31,7 +31,7 @@ export const Navigation = () => {
         <div className="nav-container">
           <div className="nav-wrapper">
             <div className="nav-brand">
-              <Link to="/" className="nav-brand-link">TaskPlatform.</Link>
+              <Link to="/" className="nav-brand-link">OutSource.</Link>
             </div>
             <div className="nav-auth-wrapper">
               <Link to="/login" className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">Log in</Link>
@@ -74,7 +74,7 @@ export const Navigation = () => {
       <div className="nav-container">
         <div className="nav-wrapper">
           <div className="nav-brand">
-            <Link to="/" className="nav-brand-link">TaskPlatform.</Link>
+            <Link to="/" className="nav-brand-link">OutSource.</Link>
             <nav className="nav-items-wrapper">
               {links.map(link => (
                 <NavLink key={link.to} to={link.to}>
