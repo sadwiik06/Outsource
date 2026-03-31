@@ -1,5 +1,13 @@
 OutSource is a powerful full stack web application 
 
+
+****Important Instruction**: Page may open but Backend dependent operations(signup,register,create task etc) may or may not work when you are testing this, cause render(the place I deployed this project) shuts the backend service within just 15min of inactivity, I have to restart every 15min manually which is hard.. that's the point of making the video even service is stopped video will act as reference)**
+
+Here is the complete demo video: https://drive.google.com/file/d/1SnW8NwUx6HsZx9niD_Y1PiizZtQ543IB/view?usp=sharing
+
+This is demo website: https://outsource-frontend-cpw7.onrender.com/
+
+
 Key features include:
 
 **For clients**
