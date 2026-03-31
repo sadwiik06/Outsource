@@ -57,7 +57,7 @@ export const FreelancerTasksPage = () => {
                       {task.status}
                     </span>
                   </td>
-                  <td>${task.budget}</td>
+                  <td>${task.totalBudget}</td>
                   <td>{task.deadline.split('T')[0]}</td>
                   <td>
                     <button
@@ -94,7 +94,7 @@ export const FreelancerTasksPage = () => {
               </div>
               <div className="freelancer-info-card !p-4 !shadow-none">
                 <div className="freelancer-info-card-label">Budget</div>
-                <div className="freelancer-info-card-value text-base">${selectedTask.budget}</div>
+                <div className="freelancer-info-card-value text-base">${selectedTask.totalBudget}</div>
               </div>
               <div className="freelancer-info-card !p-4 !shadow-none">
                 <div className="freelancer-info-card-label">Deadline</div>

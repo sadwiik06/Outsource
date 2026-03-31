@@ -95,7 +95,7 @@ export const TaskManagementPage = () => {
                     <td>
                       <span className={`status-badge ${getTaskStatusClass(t.status)}`}>{t.status}</span>
                     </td>
-                    <td><span className="payment-amount">${t.budget}</span></td>
+                    <td><span className="payment-amount">${t.totalBudget}</span></td>
                     <td>
                       <div className="admin-user-actions">
                         {t.status !== 'COMPLETED' && t.status !== 'CANCELLED' && (
@@ -131,9 +131,8 @@ export const TaskManagementPage = () => {
                 )}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div className="admin-detail-card" style={{ padding: '16px' }}>
-                    <div className="freelancer-info-card-label">Budget</div>
                     <div className="freelancer-info-card-value" style={{ color: 'var(--accent-3)', marginTop: '4px' }}>
-                      ${selectedTask.budget}
+                      ${selectedTask.totalBudget}
                     </div>
                   </div>
                   <div className="admin-detail-card" style={{ padding: '16px' }}>
