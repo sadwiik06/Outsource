@@ -33,6 +33,8 @@ public class Task {
     private String description;
 
     @ElementCollection
+    @CollectionTable(name = "task_skills")  
+    @Column(name = "skill")
     private List<String> skills;
 
     @Column(nullable = false)
