@@ -11,6 +11,10 @@ public class AccountStatusConverter implements AttributeConverter<AccountStatus,
         if (attribute == null) {
             return AccountStatus.OPEN.name();
         }
+        // Map SUSPENDED to CLOSED for database compatibility
+        if (attribute == AccountStatus.SUSPENDED) {
+            return "CLOSED";
+        }
         return attribute.name();
     }
 
@@ -20,7 +24,12 @@ public class AccountStatusConverter implements AttributeConverter<AccountStatus,
             return AccountStatus.OPEN; // Default for empty/null legacy data
         }
         try {
-            return AccountStatus.valueOf(dbData.toUpperCase());
+            String statusStr = dbData.toUpperCase();
+            // Map CLOSED from database back to SUSPENDED for app use
+            if (statusStr.equals("CLOSED")) {
+                return AccountStatus.SUSPENDED;
+            }
+            return AccountStatus.valueOf(statusStr);
         } catch (IllegalArgumentException e) {
             // Default fallback for any unrecognized string
             return AccountStatus.OPEN;

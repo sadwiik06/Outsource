@@ -45,8 +45,7 @@ public class AuthService {
         }
 
         User user = userOpt.get();
-        AccountStatus status = user.getStatus();
-        if (AccountStatus.CLOSED.equals(status) || AccountStatus.SUSPENDED.equals(status)) {
+        if (AccountStatus.SUSPENDED.equals(user.getStatus())) {
             throw new RuntimeException("Your account has been suspended");
         }
 
