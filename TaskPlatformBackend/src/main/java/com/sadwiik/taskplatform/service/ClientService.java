@@ -51,7 +51,6 @@ public class ClientService {
         task.setStatus("IN_PROGRESS");
         taskRepository.save(task);
         
-        // Sync AI-suggested milestones to the newly hired freelancer
         milestoneService.assignFreelancerToMilestones(taskId, freelancerId);
     }
 

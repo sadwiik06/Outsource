@@ -39,7 +39,6 @@ public class AdminService {
     @Autowired
     private AuditLogService auditLogService;
 
-    // ---- USER MANAGEMENT ----
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -73,7 +72,6 @@ public class AdminService {
         auditLogService.logAction(userId, "ACTIVATE_USER", "USER", userId, "User reactivated");
     }
 
-    // ---- TASK MANAGEMENT ----
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
     }
@@ -92,7 +90,6 @@ public class AdminService {
         auditLogService.logAction(0L, "CANCEL_TASK", "TASK", taskId, "Reason: " + reason);
     }
 
-    // ---- PAYMENT
     public List<PaymentTransaction> getAllPayments() {
         return paymentRepository.findAll();
     }
@@ -116,7 +113,6 @@ public class AdminService {
         auditLogService.logAction(0L, "REFUND_PAYMENT", "PAYMENT", paymentId, "Reason: " + reason);
     }
 
-    // ---- PERFORMANCE ANALYTICS ----
     public List<Performance> getAllPerformanceRecords() {
         return performanceRepository.findAll();
     }
@@ -134,7 +130,6 @@ public class AdminService {
                 .toList();
     }
 
-    // ---- SYSTEM ANALYTICS ----
     public long getTotalUsers() {
         return userRepository.count();
     }

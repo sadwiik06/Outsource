@@ -16,10 +16,8 @@ public class JacksonConfig {
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         
-        // Register Java Time module for LocalDateTime support
         mapper.registerModule(new JavaTimeModule());
         
-        // Register custom deserializer
         SimpleModule module = new SimpleModule();
         module.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
         mapper.registerModule(module);

@@ -10,7 +10,6 @@ export const ClientTasksPage = () => {
   const [tasks, setTasks]   = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Rating Modal State
   const [ratingModalTask, setRatingModalTask] = useState(null);
   const [ratingData, setRatingData] = useState({ rating: 5, review: '' });
 
