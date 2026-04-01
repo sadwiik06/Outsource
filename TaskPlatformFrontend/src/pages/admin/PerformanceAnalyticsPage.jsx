@@ -3,18 +3,16 @@ import api from '../../config/api';
 import '../Dashboard.css';
 import './Admin.css';
 
-const getPerfBadge = (score) => {
-  if (score == null) return 'perf-default';
-  if (score >= 80) return 'perf-high';
-  if (score >= 50) return 'perf-medium';
-  return 'perf-low';
-};
+const getPerfBadge = (level) => ({
+  GOLD:   'perf-high',
+  SILVER: 'perf-medium',
+  BRONZE: 'perf-low',
+  RISK:   'perf-low',
+})[level] || 'perf-default';
 
-const getPerfLabel = (score) => {
-  if (score == null) return 'N/A';
-  if (score >= 80) return 'High';
-  if (score >= 50) return 'Medium';
-  return 'Low';
+const getPerfLabel = (level) => {
+  if (!level || level === 'N/A') return 'N/A';
+  return level.charAt(0) + level.slice(1).toLowerCase();
 };
 
 export const PerformanceAnalyticsPage = () => {
@@ -114,7 +112,7 @@ export const PerformanceAnalyticsPage = () => {
           <div className="table-container">
             {activeTab === 'top' && (
               <table className="dash-table">
-                <thead><tr><th>User ID</th><th>Score</th><th>Level</th><th>Completed Tasks</th><th>Rating</th></tr></thead>
+                <thead><tr><th>User ID</th><th>Success Rate (%)</th><th>Level</th><th>Completed Tasks</th><th>Rating</th></tr></thead>
                 <tbody>
                   {topPerformers.length === 0
                     ? <tr><td colSpan={5} style={{ textAlign: 'center', padding: '32px', color: 'var(--ink-3)' }}>No data</td></tr>
@@ -134,16 +132,16 @@ export const PerformanceAnalyticsPage = () => {
                       </td>
                       <td>
                         <span style={{ fontFamily: 'var(--font-d)', fontWeight: 800, fontSize: '15px', color: 'var(--ink)' }}>
-                          {p.score}
+                          {p.completionRate ? p.completionRate.toFixed(1) : '0.0'}%
                         </span>
                       </td>
                       <td>
-                        <span className={`perf-badge ${getPerfBadge(p.score)}`}>{getPerfLabel(p.score)}</span>
+                        <span className={`perf-badge ${getPerfBadge(p.performanceLevel)}`}>{getPerfLabel(p.performanceLevel)}</span>
                       </td>
-                      <td style={{ fontWeight: 600 }}>{p.completedTasks}</td>
+                      <td style={{ fontWeight: 600 }}>{p.completedTasks || 0}</td>
                       <td>
                         <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
-                          {p.rating}
+                          {p.avgRating ? p.avgRating.toFixed(1) : '0.0'}
                           <span style={{ color: '#f59e0b' }}>★</span>
                         </span>
                       </td>
@@ -162,7 +160,9 @@ export const PerformanceAnalyticsPage = () => {
                     : riskUsers.map(p => (
                     <tr key={p.userId}>
                       <td style={{ fontWeight: 600 }}>{p.userId}</td>
-                      <td style={{ fontFamily: 'var(--font-d)', fontWeight: 800, color: 'var(--red)' }}>{p.score}</td>
+                      <td style={{ fontFamily: 'var(--font-d)', fontWeight: 800, color: 'var(--red)' }}>
+                        {p.completionRate ? p.completionRate.toFixed(1) : '0.0'}%
+                      </td>
                       <td><span className="perf-badge perf-low">High Risk</span></td>
                       <td style={{ fontSize: '13px', color: 'var(--ink-2)' }}>{p.issues || '—'}</td>
                     </tr>
@@ -173,16 +173,18 @@ export const PerformanceAnalyticsPage = () => {
 
             {activeTab === 'all' && (
               <table className="dash-table">
-                <thead><tr><th>User ID</th><th>Score</th><th>Level</th><th>Completed Tasks</th></tr></thead>
+                <thead><tr><th>User ID</th><th>Success Rate (%)</th><th>Level</th><th>Tasks</th></tr></thead>
                 <tbody>
                   {performances.length === 0
                     ? <tr><td colSpan={4} style={{ textAlign: 'center', padding: '32px', color: 'var(--ink-3)' }}>No records</td></tr>
                     : performances.map(p => (
                     <tr key={p.userId}>
                       <td style={{ fontWeight: 600 }}>{p.userId}</td>
-                      <td style={{ fontFamily: 'var(--font-d)', fontWeight: 800 }}>{p.score}</td>
-                      <td><span className={`perf-badge ${getPerfBadge(p.score)}`}>{getPerfLabel(p.score)}</span></td>
-                      <td style={{ fontWeight: 600 }}>{p.completedTasks}</td>
+                      <td style={{ fontFamily: 'var(--font-d)', fontWeight: 800 }}>
+                        {p.completionRate ? p.completionRate.toFixed(1) : '0.0'}%
+                      </td>
+                      <td><span className={`perf-badge ${getPerfBadge(p.performanceLevel)}`}>{getPerfLabel(p.performanceLevel)}</span></td>
+                      <td style={{ fontWeight: 600 }}>{p.completedTasks || 0}</td>
                     </tr>
                   ))}
                 </tbody>

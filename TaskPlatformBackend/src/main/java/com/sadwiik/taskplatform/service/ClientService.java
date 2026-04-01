@@ -4,6 +4,7 @@ import com.sadwiik.taskplatform.model.Milestone;
 import com.sadwiik.taskplatform.model.Performance;
 import com.sadwiik.taskplatform.model.Task;
 import com.sadwiik.taskplatform.model.User;
+import com.sadwiik.taskplatform.model.enums.AccountStatus;
 import com.sadwiik.taskplatform.repository.PerformanceRepository;
 import com.sadwiik.taskplatform.repository.TaskRepository;
 import com.sadwiik.taskplatform.repository.UserRepository;
@@ -85,7 +86,10 @@ public class ClientService {
 
     public List<FreelancerPerformanceDTO> getFreelancersWithPerformance() {
         List<Long> busyFreelancerIds = taskRepository.findBusyFreelancerIds();
-        List<User> freelancers = userRepository.findAllByRole("FREELANCER");
+        List<User> freelancers = userRepository.findAllByRole("FREELANCER").stream()
+                .filter(f -> !AccountStatus.CLOSED.equals(f.getStatus()))
+                .collect(Collectors.toList());
+
         return freelancers.stream()
                 .filter(f -> !busyFreelancerIds.contains(f.getId()))
                 .map(freelancer -> {

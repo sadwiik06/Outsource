@@ -49,12 +49,21 @@ public class AdminService {
     }
 
     public void suspendUser(Long userId, String reason) {
+        String currentPrincipal = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByEmail(currentPrincipal)
+                .orElseThrow(() -> new RuntimeException("Current user session not found"));
+
+        if (currentUser.getId().equals(userId)) {
+            throw new RuntimeException("You cannot suspend your own account.");
+        }
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found: " + userId));
         user.setStatus(AccountStatus.CLOSED);
         userRepository.save(user);
         auditLogService.logAction(userId, "SUSPEND_USER", "USER", userId, "Reason: " + reason);
     }
+
 
     public void activateUser(Long userId) {
         User user = userRepository.findById(userId)

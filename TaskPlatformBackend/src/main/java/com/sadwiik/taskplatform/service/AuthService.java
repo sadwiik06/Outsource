@@ -1,6 +1,7 @@
 package com.sadwiik.taskplatform.service;
 
 import com.sadwiik.taskplatform.model.User;
+import com.sadwiik.taskplatform.model.enums.AccountStatus;
 import com.sadwiik.taskplatform.repository.UserRepository;
 import com.sadwiik.taskplatform.security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,9 @@ public class AuthService {
         }
 
         User user = userOpt.get();
+        if (AccountStatus.CLOSED.equals(user.getStatus())) {
+            throw new RuntimeException("Your account has been suspended");
+        }
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Invalid credentials");

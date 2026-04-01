@@ -33,6 +33,8 @@ public class Performance {
 
     private Double earningsGrowth;
 
+    private Integer completedTasks = 0;
+
     @Column(nullable = false)
     private String performanceLevel;
 

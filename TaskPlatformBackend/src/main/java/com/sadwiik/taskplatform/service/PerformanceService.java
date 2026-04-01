@@ -76,6 +76,7 @@ public class PerformanceService {
         perf.setAvgRating(avgRating);
         perf.setDisputesCount(disputes);
         perf.setEarningsGrowth(earningsGrowth);
+        perf.setCompletedTasks((int) completedTasks);
         perf.setPerformanceLevel(determinePerformanceLevel(perf));
 
         return performanceRepository.save(perf);

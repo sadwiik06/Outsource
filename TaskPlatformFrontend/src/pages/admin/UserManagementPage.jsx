@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import api from '../../config/api';
+import { AuthContext } from '../../context/AuthContext';
 import '../Dashboard.css';
 import './Admin.css';
 
@@ -16,6 +17,7 @@ const getUserStatusClass = (s) => ({
 })[s] || 'status-default';
 
 export const UserManagementPage = () => {
+  const { user: currentUser }               = useContext(AuthContext);
   const [users, setUsers]                   = useState([]);
   const [loading, setLoading]               = useState(true);
   const [error, setError]                   = useState('');
@@ -128,14 +130,16 @@ export const UserManagementPage = () => {
                     </td>
                     <td>
                       <div className="admin-user-actions">
-                        {u.status === 'SUSPENDED' ? (
-                          <button className="btn-activate" onClick={() => handleActivate(u.id)}>
-                            ✓ Activate
-                          </button>
-                        ) : (
-                          <button className="btn-suspend" onClick={() => handleSuspend(u.id)}>
-                            ⊘ Suspend
-                          </button>
+                        {u.id !== currentUser?.id && (
+                          u.status === 'SUSPENDED' ? (
+                            <button className="btn-activate" onClick={() => handleActivate(u.id)}>
+                              ✓ Activate
+                            </button>
+                          ) : (
+                            <button className="btn-suspend" onClick={() => handleSuspend(u.id)}>
+                              ⊘ Suspend
+                            </button>
+                          )
                         )}
                         <button className="freelancer-action-btn" onClick={() => setSelectedUser(u)}>
                           Details
@@ -174,16 +178,18 @@ export const UserManagementPage = () => {
                 </div>
 
                 <div style={{ display: 'flex', gap: '10px' }}>
-                  {selectedUser.status === 'SUSPENDED' ? (
-                    <button className="btn-activate btn-full"
-                      onClick={() => { handleActivate(selectedUser.id); setSelectedUser(null); }}>
-                      ✓ Activate Account
-                    </button>
-                  ) : (
-                    <button className="btn-danger btn-full"
-                      onClick={() => { handleSuspend(selectedUser.id); setSelectedUser(null); }}>
-                      ⊘ Suspend Account
-                    </button>
+                  {selectedUser.id !== currentUser?.id && (
+                    selectedUser.status === 'SUSPENDED' ? (
+                      <button className="btn-activate btn-full"
+                        onClick={() => { handleActivate(selectedUser.id); setSelectedUser(null); }}>
+                        ✓ Activate Account
+                      </button>
+                    ) : (
+                      <button className="btn-danger btn-full"
+                        onClick={() => { handleSuspend(selectedUser.id); setSelectedUser(null); }}>
+                        ⊘ Suspend Account
+                      </button>
+                    )
                   )}
                 </div>
               </div>
