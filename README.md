@@ -5,7 +5,7 @@ OutSource is a powerful full stack web application
 
 Here is the complete demo video: https://drive.google.com/file/d/1SnW8NwUx6HsZx9niD_Y1PiizZtQ543IB/view?usp=sharing
 
-This is demo website: https://outsource-frontend-cpw7.onrender.com/
+This is demo website: https://outsource-prod1.vercel.app/
 
 
 
