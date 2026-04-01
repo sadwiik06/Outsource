@@ -5,6 +5,7 @@ import com.sadwiik.taskplatform.model.enums.AccountStatus;
 import com.sadwiik.taskplatform.repository.UserRepository;
 import com.sadwiik.taskplatform.security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,9 @@ import java.util.Optional;
 @Service
 public class AuthService {
 
+    @Value("${admin.registration.secret}")
+    private String adminRegistrationSecret;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -24,15 +28,23 @@ public class AuthService {
     @Autowired
     private JwtUtils jwtUtils;
 
-    public String register(String email, String password, String role) {
+    public String register(String email, String password, String role, String adminSecret) {
         if (userRepository.existsByEmail(email)) {
             throw new RuntimeException("Email already in use");
+        }
+
+        String normalizedRole = role.toUpperCase();
+
+        if ("ADMIN".equals(normalizedRole)) {
+            if (adminSecret == null || !adminSecret.equals(adminRegistrationSecret)) {
+                throw new RuntimeException("Invalid admin registration secret");
+            }
         }
 
         User user = new User();
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
-        user.setRole(role.toUpperCase());
+        user.setRole(normalizedRole);
         
         userRepository.save(user);
         return "User registered successfully";

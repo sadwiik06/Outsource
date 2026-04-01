@@ -1,4 +1,4 @@
-﻿
+
 
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Epilogue:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
 
@@ -432,4 +432,67 @@
   .auth-role-cards { flex-direction: column; }
 }
 
+/* ── Admin role card ── */
+.auth-role-card--admin {
+  border-color: rgba(139, 92, 246, 0.3);
+}
+.auth-role-card--admin:hover {
+  border-color: rgba(139, 92, 246, 0.5);
+  background: rgba(139, 92, 246, 0.06);
+}
+.auth-role-card--admin.is-selected--admin {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.1);
+}
+.auth-role-icon--admin {
+  color: #8b5cf6 !important;
+}
+.auth-role-check--admin {
+  color: #8b5cf6 !important;
+}
+
+/* ── Admin toggle button ── */
+.auth-toggle-btn--admin.is-active--admin {
+  background: #8b5cf6 !important;
+  color: var(--white) !important;
+}
+
+/* ── Admin secret key field ── */
+.auth-field--admin-secret {
+  animation: fadeSlideDown 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes fadeSlideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.auth-label--admin {
+  color: #8b5cf6 !important;
+}
+.auth-input--admin {
+  border-color: #8b5cf6 !important;
+  box-shadow: 2px 2px 0 rgba(139, 92, 246, 0.2) !important;
+}
+.auth-input--admin:focus {
+  border-color: #6d28d9 !important;
+  box-shadow: 4px 4px 0 rgba(109, 40, 217, 0.3) !important;
+}
+.auth-admin-hint {
+  font-size: 11.5px;
+  color: #8b5cf6;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* ── Admin submit button ── */
+.auth-btn-submit--admin {
+  background: #8b5cf6 !important;
+  border-color: #6d28d9 !important;
+  box-shadow: 4px 4px 0 #6d28d9 !important;
+}
+.auth-btn-submit--admin:hover:not(:disabled) {
+  box-shadow: 6px 6px 0 #6d28d9 !important;
+}
+.auth-btn-submit--admin:active:not(:disabled) {
+  box-shadow: 2px 2px 0 #6d28d9 !important;
+}
 

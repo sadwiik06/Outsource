@@ -1,5 +1,6 @@
 package com.sadwiik.taskplatform.controller;
 
+import com.sadwiik.taskplatform.dto.RegisterRequest;
 import com.sadwiik.taskplatform.service.AuthService;
 import com.sadwiik.taskplatform.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,12 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try {
-            String result = authService.register(user.getEmail(), user.getPassword(), user.getRole());
+            String result = authService.register(
+                request.getEmail(), request.getPassword(),
+                request.getRole(), request.getAdminSecret()
+            );
             Map<String, String> response = new HashMap<>();
             response.put("message", result);
             return ResponseEntity.ok(response);

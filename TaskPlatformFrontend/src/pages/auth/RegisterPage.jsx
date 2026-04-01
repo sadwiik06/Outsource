@@ -8,6 +8,7 @@ export const RegisterPage = () => {
   const [password, setPassword]             = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole]                     = useState('CLIENT');
+  const [adminSecret, setAdminSecret]       = useState('');
   const [error, setError]                   = useState('');
   const [loading, setLoading]               = useState(false);
   const navigate                            = useNavigate();
@@ -21,7 +22,9 @@ export const RegisterPage = () => {
     }
     setLoading(true);
     try {
-      await api.post('/auth/register', { email, password, role });
+      const payload = { email, password, role };
+      if (role === 'ADMIN') payload.adminSecret = adminSecret;
+      await api.post('/auth/register', payload);
       navigate('/login');
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
@@ -42,29 +45,46 @@ export const RegisterPage = () => {
             <div className="auth-tag">Get Started Free</div>
             <h1 className="auth-panel-h">Join thousands<br /><em>shipping faster.</em></h1>
             <p className="auth-panel-p">
-              Whether you're a client looking for talent or a freelancer
-              ready to build — OutSource has your workflow covered.
+              Whether you're a client looking for talent, a freelancer
+              ready to build, or an admin managing the platform — OutSource has your workflow covered.
             </p>
 
-            {/* Role explainer */}
+            {/* Role explainer cards */}
             <div className="auth-role-cards">
-              <div className={`auth-role-card ${role === 'CLIENT' ? 'is-selected' : ''}`}
-                onClick={() => setRole('CLIENT')}>
+              <div
+                className={`auth-role-card ${role === 'CLIENT' ? 'is-selected' : ''}`}
+                onClick={() => setRole('CLIENT')}
+              >
                 <span className="auth-role-icon">◈</span>
                 <div>
                   <div className="auth-role-name">Client</div>
-                  <div className="auth-role-desc">Post tasks & hire talent</div>
+                  <div className="auth-role-desc">Post tasks &amp; hire talent</div>
                 </div>
                 {role === 'CLIENT' && <span className="auth-role-check">✓</span>}
               </div>
-              <div className={`auth-role-card ${role === 'FREELANCER' ? 'is-selected' : ''}`}
-                onClick={() => setRole('FREELANCER')}>
+
+              <div
+                className={`auth-role-card ${role === 'FREELANCER' ? 'is-selected' : ''}`}
+                onClick={() => setRole('FREELANCER')}
+              >
                 <span className="auth-role-icon">◉</span>
                 <div>
                   <div className="auth-role-name">Freelancer</div>
-                  <div className="auth-role-desc">Find work & get paid</div>
+                  <div className="auth-role-desc">Find work &amp; get paid</div>
                 </div>
                 {role === 'FREELANCER' && <span className="auth-role-check">✓</span>}
+              </div>
+
+              <div
+                className={`auth-role-card auth-role-card--admin ${role === 'ADMIN' ? 'is-selected is-selected--admin' : ''}`}
+                onClick={() => setRole('ADMIN')}
+              >
+                <span className="auth-role-icon auth-role-icon--admin">⚙</span>
+                <div>
+                  <div className="auth-role-name">Admin</div>
+                  <div className="auth-role-desc">Manage the platform</div>
+                </div>
+                {role === 'ADMIN' && <span className="auth-role-check auth-role-check--admin">✓</span>}
               </div>
             </div>
           </div>
@@ -77,7 +97,7 @@ export const RegisterPage = () => {
         <div className="auth-form-wrap">
           <div className="auth-form-head">
             <h2 className="auth-form-title">Create an account</h2>
-            <p className="auth-form-sub">Join as a client or freelancer</p>
+            <p className="auth-form-sub">Join as a client, freelancer, or admin</p>
           </div>
 
           <form className="auth-form" onSubmit={handleSubmit} noValidate>
@@ -117,8 +137,31 @@ export const RegisterPage = () => {
                 >
                   ◉ Find work
                 </button>
+                <button
+                  type="button"
+                  className={`auth-toggle-btn auth-toggle-btn--admin ${role === 'ADMIN' ? 'is-active is-active--admin' : ''}`}
+                  onClick={() => setRole('ADMIN')}
+                >
+                  ⚙ Admin
+                </button>
               </div>
             </div>
+
+            {role === 'ADMIN' && (
+              <div className="auth-field auth-field--admin-secret">
+                <label className="auth-label auth-label--admin">Admin Secret Key</label>
+                <input
+                  type="password"
+                  required
+                  value={adminSecret}
+                  onChange={(e) => setAdminSecret(e.target.value)}
+                  placeholder="Enter admin registration secret"
+                  className="auth-input auth-input--admin"
+                  autoComplete="off"
+                />
+                <span className="auth-admin-hint">🔒 Only authorised personnel can register as admin</span>
+              </div>
+            )}
 
             <div className="auth-field">
               <label className="auth-label">Password</label>
@@ -147,7 +190,7 @@ export const RegisterPage = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`auth-btn-submit ${loading ? 'is-loading' : ''}`}
+              className={`auth-btn-submit ${role === 'ADMIN' ? 'auth-btn-submit--admin' : ''} ${loading ? 'is-loading' : ''}`}
             >
               {loading ? (
                 <><span className="auth-spinner" /> Creating account...</>
