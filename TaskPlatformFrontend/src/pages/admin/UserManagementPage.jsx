@@ -13,6 +13,8 @@ const getRoleClass = (role) => ({
 const getUserStatusClass = (s) => ({
   ACTIVE:    'status-active',
   SUSPENDED: 'status-suspended',
+  CLOSED:    'status-suspended',
+  OPEN:      'status-default',
   INACTIVE:  'status-default',
 })[s] || 'status-default';
 
@@ -131,7 +133,7 @@ export const UserManagementPage = () => {
                     <td>
                       <div className="admin-user-actions">
                         {u.id !== currentUser?.id && (
-                          u.status === 'SUSPENDED' ? (
+                          (u.status === 'SUSPENDED' || u.status === 'CLOSED') ? (
                             <button className="btn-activate" onClick={() => handleActivate(u.id)}>
                               ✓ Activate
                             </button>
@@ -179,7 +181,7 @@ export const UserManagementPage = () => {
 
                 <div style={{ display: 'flex', gap: '10px' }}>
                   {selectedUser.id !== currentUser?.id && (
-                    selectedUser.status === 'SUSPENDED' ? (
+                    (selectedUser.status === 'SUSPENDED' || selectedUser.status === 'CLOSED') ? (
                       <button className="btn-activate btn-full"
                         onClick={() => { handleActivate(selectedUser.id); setSelectedUser(null); }}>
                         ✓ Activate Account

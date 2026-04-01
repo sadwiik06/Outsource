@@ -22,11 +22,7 @@ public class AccountStatusConverter implements AttributeConverter<AccountStatus,
         try {
             return AccountStatus.valueOf(dbData.toUpperCase());
         } catch (IllegalArgumentException e) {
-            // Handle legacy "SUSPENDED" strings
-            if (dbData.equalsIgnoreCase("SUSPENDED")) {
-                return AccountStatus.CLOSED;
-            }
-            // Default fallback for any other unrecognized string
+            // Default fallback for any unrecognized string
             return AccountStatus.OPEN;
         }
     }

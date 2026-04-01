@@ -59,7 +59,7 @@ public class AdminService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found: " + userId));
-        user.setStatus(AccountStatus.CLOSED);
+        user.setStatus(AccountStatus.SUSPENDED);
         userRepository.save(user);
         auditLogService.logAction(userId, "SUSPEND_USER", "USER", userId, "Reason: " + reason);
     }
