@@ -45,11 +45,14 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        // Use setAllowedOriginPatterns instead of setAllowedOrigins for better flexibility
+        configuration.setAllowedOriginPatterns(Arrays.asList(allowedOrigins.split(",")));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Requested-With"));
         configuration.setAllowCredentials(true);
-        configuration.setExposedHeaders(Arrays.asList("Authorization"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        // Max age for preflight requests
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -65,6 +68,7 @@ public class SecurityConfig {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Explicitly permit preflight
                     .requestMatchers("/api/auth/**").permitAll()
 
                     .requestMatchers(HttpMethod.GET, "/api/tasks/**").hasAnyRole("CLIENT", "FREELANCER", "ADMIN")
