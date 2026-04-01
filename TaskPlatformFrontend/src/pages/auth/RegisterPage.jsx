@@ -155,11 +155,11 @@ export const RegisterPage = () => {
                   required
                   value={adminSecret}
                   onChange={(e) => setAdminSecret(e.target.value)}
-                  placeholder="Enter admin registration secret"
+                  placeholder="SECRET KEY FOR TESTING: admin@secret123"
                   className="auth-input auth-input--admin"
                   autoComplete="off"
                 />
-                <span className="auth-admin-hint">🔒 Only authorised personnel can register as admin</span>
+                <span className="auth-admin-hint">Only authorised personnel can register as admin</span>
               </div>
             )}
 
