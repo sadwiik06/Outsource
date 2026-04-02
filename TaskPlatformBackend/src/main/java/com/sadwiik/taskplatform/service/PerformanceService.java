@@ -141,7 +141,6 @@ public class PerformanceService {
         Long clientId = task.getClientId();
 
         calculateFreelancerPerformance(freelancerId);
-
         calculateClientPerformance(clientId);
     }
 
@@ -155,6 +154,7 @@ public class PerformanceService {
 
         Performance freelancerPerf = performanceRepository.findByUserId(freelancerId)
                 .orElse(new Performance());
+        freelancerPerf.setUserId(freelancerId);
         freelancerPerf.setDisputesCount(freelancerPerf.getDisputesCount() + 1);
         performanceRepository.save(freelancerPerf);
 

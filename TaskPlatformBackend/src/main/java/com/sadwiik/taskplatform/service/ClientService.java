@@ -59,8 +59,8 @@ public class ClientService {
     }
 
     public void approveMilestone(Long milestoneId, String message) {
+        // forceApprove already handles performance update and payment release internally
         milestoneService.forceApprove(milestoneId, message);
-        performanceService.updateScoreAfterApproval(milestoneId);
     }
 
     public void rejectMilestone(Long milestoneId, String reason) {
