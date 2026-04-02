@@ -7,7 +7,25 @@ Here is the complete demo video: https://drive.google.com/file/d/1SnW8NwUx6HsZx9
 
 This is demo website: https://outsource-prod1.vercel.app/
 
+**Procedure to follow**
 
+1. Create a client account, then log in with it.
+2. In the dashboard, go to Create Task to create a task.
+3. Similarly, create a new freelancer account in incognito mode.
+4. In the client tab, after creating the task, go back to the dashboard. You will see the Assign Freelancer option; there you can assign the task to your created freelancer account.<img width="1533" height="734" alt="image" src="https://github.com/user-attachments/assets/f9a84ded-aafe-410d-b045-29249fe19fae" />
+5. Go back to the client tab and click on My Tasks. There, you will see Manage Milestones opposite your project name. Click on it, then click on AI Suggest Milestones, then confirm and fund all.
+6. Now, from the freelancer tab, reload it and you can see on the dashboard the three milestones assigned to you. You can submit from there or from the milestones page. For testing, just provide a link like https://github.com
+7. Now, as a client from the client tab, accept the work from the dashboard, and you can see the money for that milestone is updated on the freelancer side after reload.
+8. After the freelancer submits all the milestones, the client can rate the freelancer from the My Tasks page
+
+That sums up the client <-> freelancer workflow.
+
+9. Now for admin testing, create an account by selecting Admin and entering the secret key from the placeholder admin@secret123.
+10. Then check the dashboard metrics. Go to Users to suspend or activate an account. Once you suspend an account here, you will not be able to log in with that client or freelancer account.
+11. In Tasks, you can see all the tasks created by clients and their status. Similarly, in Payments, Performance, and Audit Logs, you can view the respective details
+THAT'S THE END :)
+
+--
 
 **Key features include:**
 
@@ -35,7 +53,7 @@ This is demo website: https://outsource-prod1.vercel.app/
 
 2. They can change settings that affect the system and decide what a good performance is.
 
-
+--
 
 **The technology used to make OutSource**
 
@@ -47,7 +65,7 @@ This is demo website: https://outsource-prod1.vercel.app/
 
 4. Database: MySQL
 
-
+--
 
 **For setup locally:**
 
