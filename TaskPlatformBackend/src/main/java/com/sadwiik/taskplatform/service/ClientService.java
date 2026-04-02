@@ -86,7 +86,7 @@ public class ClientService {
     public List<FreelancerPerformanceDTO> getFreelancersWithPerformance() {
         List<Long> busyFreelancerIds = taskRepository.findBusyFreelancerIds();
         List<User> freelancers = userRepository.findAllByRole("FREELANCER").stream()
-                .filter(f -> !AccountStatus.CLOSED.equals(f.getStatus()))
+                .filter(f -> !AccountStatus.CLOSED.equals(f.getStatus()) && !AccountStatus.SUSPENDED.equals(f.getStatus()))
                 .collect(Collectors.toList());
 
         return freelancers.stream()

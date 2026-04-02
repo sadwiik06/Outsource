@@ -17,6 +17,29 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private com.sadwiik.taskplatform.repository.UserRepository userRepository;
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(java.security.Principal principal) {
+        try {
+            if (principal == null) {
+                return ResponseEntity.status(401).body(Map.of("message", "Not authenticated"));
+            }
+            User user = userRepository.findByEmail(principal.getName())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            
+            if (com.sadwiik.taskplatform.model.enums.AccountStatus.SUSPENDED.equals(user.getStatus()) || 
+                com.sadwiik.taskplatform.model.enums.AccountStatus.CLOSED.equals(user.getStatus())) {
+               return ResponseEntity.status(403).body(Map.of("message", "Account suspended"));
+            }
+            
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
+        }
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try {

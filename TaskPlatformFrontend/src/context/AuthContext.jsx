@@ -8,15 +8,34 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (err) {
-        console.error('Failed to parse user data', err);
+    const initUser = async () => {
+      const storedUser = localStorage.getItem('user');
+      const token = localStorage.getItem('token');
+      
+      if (storedUser && token) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser); // Set initial state to avoid layout shift
+          
+          // Verify status with backend
+          const res = await api.get('/auth/me');
+          const updatedUser = { ...parsedUser, ...res.data };
+          setUser(updatedUser);
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+        } catch (err) {
+          console.error('Failed to verify user status', err);
+          if (err.response && (err.response.status === 403 || err.response.status === 401)) {
+            // User is suspended or unauthorized
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            setUser(null);
+          }
+        }
       }
-    }
-    setLoading(false);
+      setLoading(false);
+    };
+
+    initUser();
   }, []);
 
   const logout = () => {
