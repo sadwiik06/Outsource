@@ -71,12 +71,15 @@ public class PaymentService {
                         throw new RuntimeException("Payment already released for milestone: " + milestoneId);
                 }
 
-                
-                User freelancer = userRepository.findById(tx.getPayeeId())
+                Long payeeId = tx.getPayeeId() != null ? tx.getPayeeId() : milestone.getFreelancerId();
+                if (payeeId == null) {
+                        throw new RuntimeException("Cannot release payment: Freelancer is not assigned to this milestone.");
+                }
+
+                User freelancer = userRepository.findById(payeeId)
                 .orElseThrow(() -> new RuntimeException("Freelancer not found"));
                 
-
-        
+                tx.setPayeeId(payeeId);
                 freelancer.setBalance(freelancer.getBalance() + tx.getAmount());
                 userRepository.save(freelancer);
                 
