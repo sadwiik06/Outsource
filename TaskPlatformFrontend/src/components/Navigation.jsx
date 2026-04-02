@@ -47,7 +47,7 @@ export const Navigation = () => {
     ADMIN: [
       { label: 'Dashboard', to: '/admin/dashboard' },
       { label: 'Users', to: '/admin/users' },
-      { label: 'Tasks', to: '/admin/tasks' },
+      // { label: 'Tasks', to: '/admin/tasks' },
       { label: 'Payments', to: '/admin/payments' },
       { label: 'Performance', to: '/admin/performance' },
       { label: 'Audits', to: '/admin/audits' },

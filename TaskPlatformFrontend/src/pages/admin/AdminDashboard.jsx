@@ -6,7 +6,7 @@ import './Admin.css';
 
 const NAV_ITEMS = [
   { label: 'Users',       icon: '◉', to: '/admin/users'       },
-  { label: 'Tasks',       icon: '◈', to: '/admin/tasks'       },
+  // { label: 'Tasks',       icon: '◈', to: '/admin/tasks'       },
   { label: 'Payments',    icon: '⊛', to: '/admin/payments'    },
   { label: 'Performance', icon: '◬', to: '/admin/performance' },
   { label: 'Audit Logs',  icon: '⌗', to: '/admin/audits'      },
