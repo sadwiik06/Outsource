@@ -12,11 +12,11 @@ This is demo website: https://outsource-prod1.vercel.app/
 1. Create a client account, then log in with it.
 2. In the dashboard, go to Create Task to create a task.
 3. Similarly, create a new freelancer account in incognito mode.
-4. In the client tab, after creating the task, go back to the dashboard. You will see the Assign Freelancer option; there you can assign the task to your created freelancer account.<img width="1533" height="734" alt="image" src="https://github.com/user-attachments/assets/f9a84ded-aafe-410d-b045-29249fe19fae" />
-5. Go back to the client tab and click on My Tasks. There, you will see Manage Milestones opposite your project name. Click on it, then click on AI Suggest Milestones, then confirm and fund all.
+4. In the client tab, after creating the task, fall back to the dashboard. You will see the Assign Freelancer option, there you can assign the task to your created freelancer account.<img width="1533" height="734" alt="image" src="https://github.com/user-attachments/assets/f9a84ded-aafe-410d-b045-29249fe19fae" />
+5. Now, go back to the client tab and click on My Tasks. There, you will see Manage Milestones opposite your project name. Click on it, then click on AI Suggest Milestones, then confirm and fund all
 6. Now, from the freelancer tab, reload it and you can see on the dashboard the three milestones assigned to you. You can submit from there or from the milestones page. For testing, just provide a link like https://github.com
-7. Now, as a client from the client tab, accept the work from the dashboard, and you can see the money for that milestone is updated on the freelancer side after reload.
-8. After the freelancer submits all the milestones, the client can rate the freelancer from the My Tasks page
+7. Now as a client from clients tab, accept the work from dashboard and you can see the money for that milestone is updated on freelancer side after reload 
+8. After freelancer submitting all the milestones assigned, client can rate the freelancer from my tasks page
 
 That sums up the client <-> freelancer workflow.
 
