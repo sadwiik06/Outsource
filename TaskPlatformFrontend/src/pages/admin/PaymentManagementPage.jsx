@@ -36,7 +36,7 @@ export const PaymentManagementPage = () => {
     const reason = prompt('Enter refund reason:');
     if (!reason) return;
     try {
-      await api.post(`/admin/payments/${paymentId}/refund`, reason);
+      await api.post(`/admin/payments/${paymentId}/refund`, { reason });
       fetchPayments();
     } catch { setError('Failed to process refund'); }
   };

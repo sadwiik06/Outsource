@@ -34,7 +34,7 @@ export const TaskManagementPage = () => {
     const reason = prompt('Enter cancellation reason:');
     if (!reason) return;
     try {
-      await api.post(`/admin/tasks/${taskId}/cancel`, reason);
+      await api.post(`/admin/tasks/${taskId}/cancel`, { reason });
       fetchTasks();
     } catch { setError('Failed to cancel task'); }
   };

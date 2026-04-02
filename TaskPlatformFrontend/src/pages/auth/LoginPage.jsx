@@ -12,6 +12,14 @@ export const LoginPage = () => {
   const { setUser }             = useContext(AuthContext);
   const navigate                = useNavigate();
 
+  React.useEffect(() => {
+    const msg = sessionStorage.getItem('logoutMessage');
+    if (msg) {
+      setError(msg);
+      sessionStorage.removeItem('logoutMessage');
+    }
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);

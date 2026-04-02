@@ -52,7 +52,8 @@ public class FreelancerService {
                     }
                 });
 
-            if (user.getStatus() != com.sadwiik.taskplatform.model.enums.AccountStatus.CLOSED) {
+            if (user.getStatus() != com.sadwiik.taskplatform.model.enums.AccountStatus.CLOSED &&
+                user.getStatus() != com.sadwiik.taskplatform.model.enums.AccountStatus.SUSPENDED) {
                 long activeTasks = taskRepository.findByFreelancerId(freelancerId).stream()
                         .filter(t -> "IN_PROGRESS".equals(t.getStatus()) || "OPEN".equals(t.getStatus()))
                         .count();

@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
         } catch (err) {
           console.error('Failed to verify user status', err);
           if (err.response && (err.response.status === 403 || err.response.status === 401)) {
-            // User is suspended or unauthorized
+            sessionStorage.setItem('logoutMessage', 'Your account has been suspended by an administrator.');
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             setUser(null);

@@ -40,8 +40,9 @@ public class AdminController {
     }
 
     @PostMapping("/users/{userId}/suspend")
-    public ResponseEntity<String> suspendUser(@PathVariable Long userId, @RequestBody String reason) {
+    public ResponseEntity<String> suspendUser(@PathVariable Long userId, @RequestBody java.util.Map<String, String> payload) {
         try {
+            String reason = payload.get("reason");
             adminService.suspendUser(userId, reason);
             return ResponseEntity.ok("User suspended: " + userId);
         } catch (RuntimeException e) {
@@ -80,8 +81,9 @@ public class AdminController {
     }
 
     @PostMapping("/tasks/{taskId}/cancel")
-    public ResponseEntity<String> cancelTask(@PathVariable Long taskId, @RequestBody String reason) {
+    public ResponseEntity<String> cancelTask(@PathVariable Long taskId, @RequestBody java.util.Map<String, String> payload) {
         try {
+            String reason = payload.get("reason");
             adminService.cancelTask(taskId, reason);
             return ResponseEntity.ok("Task cancelled: " + taskId);
         } catch (RuntimeException e) {
@@ -118,8 +120,9 @@ public class AdminController {
     }
 
     @PostMapping("/payments/{paymentId}/refund")
-    public ResponseEntity<String> refundPayment(@PathVariable Long paymentId, @RequestBody String reason) {
+    public ResponseEntity<String> refundPayment(@PathVariable Long paymentId, @RequestBody java.util.Map<String, String> payload) {
         try {
+            String reason = payload.get("reason");
             adminService.refundPayment(paymentId, reason);
             return ResponseEntity.ok("Payment refunded: " + paymentId);
         } catch (RuntimeException e) {

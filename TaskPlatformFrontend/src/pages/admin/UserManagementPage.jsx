@@ -41,7 +41,7 @@ export const UserManagementPage = () => {
     const reason = prompt('Enter suspension reason:');
     if (!reason) return;
     try {
-      await api.post(`/admin/users/${userId}/suspend`, reason);
+      await api.post(`/admin/users/${userId}/suspend`, { reason });
       fetchUsers();
     } catch { setError('Failed to suspend user'); }
   };
