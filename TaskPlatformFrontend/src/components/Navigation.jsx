@@ -74,7 +74,10 @@ export const Navigation = () => {
       <div className="nav-container">
         <div className="nav-wrapper">
           <div className="nav-brand">
-            <Link to="/" className="nav-brand-link">OutSource.</Link>
+            <Link
+              to={{ ADMIN: '/admin/dashboard', CLIENT: '/client/dashboard', FREELANCER: '/freelancer/dashboard' }[user.role] ?? '/'}
+              className="nav-brand-link"
+            >OutSource.</Link>
             <nav className="nav-items-wrapper">
               {links.map(link => (
                 <NavLink key={link.to} to={link.to}>
