@@ -1,7 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import "./HomePage.css";
 
-const NAV_LINKS = ["Product", "Features", "Pricing", "About"];
+const NAV_LINKS = [
+  { label: "Features",   href: "#features" },
+  { label: "How It Works", href: "#how-it-works" },
+  { label: "Roles",      href: "#roles" },
+  { label: "Reviews",    href: "#reviews" },
+];
 
 const STATS = [
   { value: "12K+",  label: "Active Projects" },
@@ -85,12 +90,12 @@ export default function HomePage() {
 
       <nav className={`hp-nav ${scrolled ? "hp-nav--stuck" : ""}`}>
         <div className="hp-nav-inner">
-          <a href="#" className="hp-logo">
+          <a href="/" className="hp-logo">
             <span className="hp-logo-mark">⬡</span>
             OutSource
           </a>
           <div className="hp-nav-links">
-            {NAV_LINKS.map(l => <a key={l} href="#" className="hp-nav-link">{l}</a>)}
+            {NAV_LINKS.map(l => <a key={l.label} href={l.href} className="hp-nav-link">{l.label}</a>)}
           </div>
           <div className="hp-nav-cta">
             <a href="/login" className="hp-btn-ghost">Log in</a>
@@ -121,8 +126,8 @@ export default function HomePage() {
             </p>
 
             <div className="hp-hero-btns">
-              <a href="#" className="hp-btn-solid hp-btn-lg">Start for free →</a>
-              <a href="#" className="hp-btn-outline hp-btn-lg">How it works</a>
+              <a href="/register" className="hp-btn-solid hp-btn-lg">Start for free →</a>
+              <a href="#how-it-works" className="hp-btn-outline hp-btn-lg">How it works</a>
             </div>
 
             <div className="hp-social-proof">
@@ -193,7 +198,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className={`hp-features ${featInView ? "is-visible" : ""}`} ref={featRef}>
+      <section id="features" className={`hp-features ${featInView ? "is-visible" : ""}`} ref={featRef}>
         <div className="hp-wrap">
           <div className="hp-sect-head">
             <div className="hp-tag">Platform Features</div>
@@ -215,7 +220,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className={`hp-steps ${stepsInView ? "is-visible" : ""}`} ref={stepsRef}>
+      <section id="how-it-works" className={`hp-steps ${stepsInView ? "is-visible" : ""}`} ref={stepsRef}>
         <div className="hp-wrap">
           <div className="hp-tag hp-tag-inv">How It Works</div>
           <h2 className="hp-h2 hp-h2-inv">Four steps to done.</h2>
@@ -231,7 +236,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="hp-roles">
+      <section id="roles" className="hp-roles">
         <div className="hp-wrap">
           <div className="hp-tag">Built for Everyone</div>
           <h2 className="hp-h2">One platform,<br />three perspectives.</h2>
@@ -254,7 +259,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="hp-testi">
+      <section id="reviews" className="hp-testi">
         <div className="hp-wrap">
           <div className="hp-tag">What People Say</div>
           <h2 className="hp-h2">Heard from the field.</h2>
@@ -289,8 +294,8 @@ export default function HomePage() {
           </h2>
           <p className="hp-cta-p">Join thousands of clients and freelancers already shipping on OutSource.</p>
           <div className="hp-cta-btns">
-            <a href="#" className="hp-btn-solid hp-btn-lg">Create free account →</a>
-            <a href="#" className="hp-btn-outline hp-btn-lg">Talk to sales</a>
+            <a href="/register" className="hp-btn-solid hp-btn-lg">Create free account →</a>
+            <a href="/login" className="hp-btn-outline hp-btn-lg">Sign in instead</a>
           </div>
         </div>
       </section>
@@ -298,7 +303,7 @@ export default function HomePage() {
       <footer className="hp-footer">
         <div className="hp-footer-top">
           <div className="hp-footer-brand">
-            <a href="#" className="hp-logo">
+            <a href="/" className="hp-logo">
               <span className="hp-logo-mark">⬡</span>
               OutSource
             </a>
@@ -306,13 +311,21 @@ export default function HomePage() {
           </div>
           <div className="hp-footer-cols">
             {[
-              { h: "Product", ls: ["Features","Pricing","Changelog","Roadmap"] },
-              { h: "Company", ls: ["About","Blog","Careers","Press"] },
-              { h: "Legal",   ls: ["Privacy","Terms","Security","Cookies"] },
+              { h: "Navigate", ls: [
+                { label: "Features",    href: "#features" },
+                { label: "How It Works",href: "#how-it-works" },
+                { label: "Roles",       href: "#roles" },
+                { label: "Reviews",     href: "#reviews" },
+              ]},
+              { h: "Account", ls: [
+                { label: "Sign In",     href: "/login" },
+                { label: "Register",    href: "/register" },
+                { label: "Dashboard",   href: "/dashboard" },
+              ]},
             ].map(c => (
               <div className="hp-fcol" key={c.h}>
                 <div className="hp-fcol-h">{c.h}</div>
-                {c.ls.map(l => <a key={l} href="#" className="hp-flink">{l}</a>)}
+                {c.ls.map(l => <a key={l.label} href={l.href} className="hp-flink">{l.label}</a>)}
               </div>
             ))}
           </div>
